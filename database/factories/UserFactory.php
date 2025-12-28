@@ -36,6 +36,12 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
+
+            'age' => fake()->numberBetween(18, 80),
+            'city' => fake()->city(),
+            'street' => fake()->streetAddress(),
+            'username' => fake()->unique()->userName(),
+            'role' => fake()->randomElement(['seller', 'buyer']),
         ];
     }
 
