@@ -12,10 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedTinyInteger('age')->after('last_name');
-            $table->string('city', 20)->after('age');
-            $table->string('street', 20)->after('city');
-            $table->string('username', 30)->unique()->after('email');
+            $table->unsignedTinyInteger('age')->after('name');
+            $table->string('city', 30)->after('age');
+            $table->string('street', 100)->after('city');
             $table->enum('role', ['seller', 'buyer'])->default('buyer')->after('password');
         });
     }
@@ -31,8 +30,7 @@ return new class extends Migration
                 'last_name', 
                 'age', 
                 'city', 
-                'street', 
-                'username', 
+                'street',
                 'role'
             ]);
         });

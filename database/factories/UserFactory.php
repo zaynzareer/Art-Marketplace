@@ -40,7 +40,6 @@ class UserFactory extends Factory
             'age' => fake()->numberBetween(18, 80),
             'city' => fake()->city(),
             'street' => fake()->streetAddress(),
-            'username' => fake()->unique()->userName(),
             'role' => fake()->randomElement(['seller', 'buyer']),
         ];
     }
