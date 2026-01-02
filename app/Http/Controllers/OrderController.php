@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\OrderResource;;
 
 class OrderController extends Controller
 {
@@ -12,15 +14,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return OrderResource::collection(
+            Order::with('orderItems.product')->where('user_id', Auth::id())->get()
+        );
     }
 
     /**
@@ -28,21 +24,34 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $cart = Auth::user()->cart()->with('cartItems.product')->firstOrFail();
+
+        if ($cart->cartItems->isEmpty()) {
+            return response()->json(['message' => 'Cart is empty.'], 400);
+        }
+
+        $order = Order::create([
+            'user_id' => Auth::id(),
+        ]);
+
+        foreach ($cart->cartItems as $cartItem) {
+            $order->orderItems()->create([
+                'order_id'   => $order->id,
+                'product_id' => $cartItem->product_id,
+                'quantity'   => $cartItem->quantity,
+                'unit_price' => $cartItem->product->price,
+            ]);
+        }
+
+        $cart->cartItems()->delete();
+
+        return new OrderResource($order->load('orderItems.product'));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Order $order)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order)
+    public function show(string $id)
     {
         //
     }
@@ -50,7 +59,7 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order)
+    public function update(Request $request, string $id)
     {
         //
     }
@@ -58,7 +67,7 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Order $order)
+    public function destroy(string $id)
     {
         //
     }
