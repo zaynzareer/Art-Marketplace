@@ -29,6 +29,32 @@
                 <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
             </div>
 
+            <div class="mt-4">
+                <x-label for="age" value="{{ __('Age') }}" />
+                <x-input id="age" class="block mt-1 w-full" type="number" name="age" :value="old('age')" required />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="city" value="{{ __('City') }}" />
+                <x-input id="city" class="block mt-1 w-full" type="text" name="city" :value="old('city')" required />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="street" value="{{ __('Street') }}" />
+                <x-input id="street" class="block mt-1 w-full" type="text" name="street" :value="old('street')" required />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="role" value="{{ __('Role') }}" />
+                <select id="role" name="role"
+                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    required>
+                    <option value="">Select Role</option>
+                    <option value="seller">Seller</option>
+                    <option value="buyer">Buyer</option>
+                </select>
+            </div>
+
             @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
                 <div class="mt-4">
                     <x-label for="terms">
