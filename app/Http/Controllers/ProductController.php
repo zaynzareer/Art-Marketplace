@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ProductResource;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,6 +42,25 @@ class ProductController extends Controller
         }
 
         $products = $query->paginate(10);
+
+        return ProductResource::collection($products);
+    }
+
+    /**
+     * Display a listing of the resource for the authenticated seller.
+    */
+    public function sellerIndex(Request $request)
+    {
+        $products = Product::where('seller_id', Auth::id())
+            ->when($request->search, fn ($q) =>
+                $q->where('name', 'like', "%{$request->search}%")
+            )
+            ->when(
+                $request->category && $request->category !== 'all',
+                fn ($q) => $q->where('category', $request->category)
+            )
+            ->latest()
+            ->paginate(8);
 
         return ProductResource::collection($products);
     }
