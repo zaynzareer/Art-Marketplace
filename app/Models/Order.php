@@ -14,7 +14,8 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id'
+        'user_id',
+        'status',
     ];
 
     public function buyer(): BelongsTo
