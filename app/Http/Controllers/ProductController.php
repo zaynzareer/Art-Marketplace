@@ -70,16 +70,20 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $path = $request->file('image')->store('products', 'public');
-
         $validated = $request->validate([
             'name'        => 'required|string|max:50',
             'description' => 'nullable|string',
             'price'       => 'required|numeric|min:0',
-            'image'       => 'required|string',
-            'seller_id'   => 'required|exists:users,id',
+            'category'    => 'required|string',
+            'image'       => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        $validated['image'] = $path;
+        
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+            $validated['image'] = $imagePath;
+        }
+
+        $validated['seller_id'] = Auth::id();
 
         $product = Product::create($validated);
         return new ProductResource($product);
@@ -100,15 +104,18 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $path = $request->file('image')->store('products', 'public');
-
         $validated = $request->validate([
             'name'        => 'sometimes|required|string|max:50',
             'description' => 'sometimes|nullable|string',
             'price'       => 'sometimes|required|numeric|min:0',
-            'image'       => 'sometimes|required|string',
+            'category'    => 'sometimes|required|string',
+            'image'       => 'sometimes|required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        $validated['image'] = $path;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+            $validated['image'] = $imagePath;
+        }
 
         $product->update($validated);
         return new ProductResource($product);
