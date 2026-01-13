@@ -19,6 +19,8 @@ class OrderFactory extends Factory
     {
         return [
             'buyer_id' => User::where('role', 'buyer')->inRandomOrder()->first()->id,
+            'seller_id' => User::where('role', 'seller')->inRandomOrder()->first()->id,
+            'status' => $this->faker->randomElement(['pending', 'processing', 'shipped', 'delivered', 'cancelled'])
         ];
     }
 }
