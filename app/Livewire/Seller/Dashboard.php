@@ -25,6 +25,8 @@ class Dashboard extends Component
             ];
             
             $this->recentOrders = $data['recent_orders'];
+        } else {
+            $this->dispatch('notify', message: 'Failed to load dashboard data', type: 'error');
         }
     }
 

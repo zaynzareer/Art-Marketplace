@@ -55,12 +55,17 @@ class Dashboard extends Component
 
     public function addToCart($productId)
     {
-        Http::withToken(Session::get('api_token'))
+        $response = Http::withToken(Session::get('api_token'))
             ->post(route('api.cart.store'), [
-                'user_id'    => Auth::id(),
                 'product_id' => $productId,
                 'quantity'   => 1,
             ]);
+
+        if ($response->successful()) {
+            $this->dispatch('notify', message: 'Product added to cart', type: 'success');
+        } else {
+            $this->dispatch('notify', message: 'Failed to add product to cart', type: 'error');
+        }
     }
 
     public function resetPage()

@@ -28,9 +28,14 @@ class Product extends Component
 
     public function deleteProduct(int $productId)
     {
-        Http::withToken(Session::get('api_token'))->delete(route('api.products.destroy', $productId));
+        $response = Http::withToken(Session::get('api_token'))->delete(route('api.products.destroy', $productId));
         
-        $this->updated('products');
+        if ($response->successful()) {
+            $this->dispatch('notify', message: 'Product deleted successfully', type: 'success');
+            $this->updated('products');
+        } else {
+            $this->dispatch('notify', message: 'Failed to delete product', type: 'error');
+        }
     }
     
     public function fetchProducts()
