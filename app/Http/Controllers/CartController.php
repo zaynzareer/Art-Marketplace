@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use App\Http\Resources\CartResource;
-use App\Models\CartItem;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -23,13 +24,12 @@ class CartController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
         ]);
 
         $cart = Cart::firstOrCreate(
-            ['user_id' => $validated['user_id']],
+            ['user_id' => Auth::id()],
         );
 
         CartItem::updateOrCreate(
@@ -50,7 +50,7 @@ class CartController extends Controller
      */
     public function show(string $id)
     {
-        $cart = Cart::with('cartItems.product')->findOrFail($id);
+        $cart = Cart::with('cartItems.product')->where('user_id', $id)->firstOrFail();
         return new CartResource($cart);
     }
 
@@ -67,10 +67,21 @@ class CartController extends Controller
      */
     public function destroy(string $id)
     {
-        $cart = Cart::findOrFail($id);
-        $cart->cartItems()->delete();
-        $cart->delete();
+        // $validated = $request->validate([
+        //     'product_id' => 'required|exists:products,id',
+        // ]);
 
-        return response()->json(['message' => 'Cart deleted successfully.'], 200);
+        $cart = Cart::where('user_id', Auth::id())->firstOrFail();
+
+        $item = CartItem::where('cart_id', $cart->id)
+            ->where('product_id', $id)->first();
+
+        if (!$item) {
+            return response()->json(['message' => 'Item not found in cart.'], 404);
+        }
+
+        $item->delete();
+
+        return new CartResource($cart->load('cartItems.product'));
     }
 }
