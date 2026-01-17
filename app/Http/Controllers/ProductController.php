@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Services\CacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Resources\ProductResource;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,34 +14,59 @@ class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(Request $request)
     {
-        // eager load seller relationship
+        $search = $request->input('search', '');
+        $category = $request->input('category', 'all');
+        $sort = $request->input('sort', 'newest');
+        $page = $request->input('page', 1);
+
+        // Skip cache for search queries due to high variability
+        if (!empty($search)) {
+            return $this->fetchProductsFromDatabase($search, $category, $sort, $page);
+        }
+
+        // Build cache key
+        $cacheKey = "products:list:" . ($category === 'all' ? 'all' : $category) . ":p{$page}:sort-{$sort}";
+
+        // Get from cache or database
+        $products = Cache::tags([CacheService::TAG_PRODUCTS])
+            ->remember($cacheKey, CacheService::PRODUCT_LIST_TTL, function () use ($search, $category, $sort, $page) {
+                return $this->fetchProductsFromDatabase($search, $category, $sort, $page);
+            });
+
+        return $products;
+    }
+
+    /**
+     * Fetch products from database with filters
+     */
+    private function fetchProductsFromDatabase($search = '', $category = 'all', $sort = 'newest', $page = 1)
+    {
         $query = Product::query()->with('seller');
 
         // Search filter
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+        if (!empty($search)) {
+            $query->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('description', 'like', '%' . $search . '%');
         }
 
         // Category filter
-        if ($request->filled('category') && $request->category !== 'all') {
-            $query->where('category', $request->category);
+        if ($category !== 'all') {
+            $query->where('category', $category);
         }
 
         // Sorting
-        if ($request->filled('sort')) {
-            match ($request->sort) {
-                'price_asc'  => $query->orderBy('price', 'asc'),
-                'price_desc' => $query->orderBy('price', 'desc'),
-                'newest'     => $query->orderBy('created_at', 'desc'),
-                default      => null,
-            };
-        } else {
-            // Default sort
-            $query->orderBy('created_at', 'desc');
-        }
+        match ($sort) {
+            'price_asc'  => $query->orderBy('price', 'asc'),
+            'price_desc' => $query->orderBy('price', 'desc'),
+            'newest'     => $query->orderBy('created_at', 'desc'),
+            default      => $query->orderBy('created_at', 'desc'),
+        };
 
         $products = $query->paginate(10);
 
@@ -48,19 +75,24 @@ class ProductController extends Controller
 
     /**
      * Display a listing of the resource for the authenticated seller.
-    */
+     */
     public function sellerIndex(Request $request)
     {
-        $products = Product::where('seller_id', Auth::id())
-            ->when($request->search, fn ($q) =>
-                $q->where('name', 'like', "%{$request->search}%")
-            )
-            ->when(
-                $request->category && $request->category !== 'all',
-                fn ($q) => $q->where('category', $request->category)
-            )
-            ->latest()
-            ->paginate(8);
+        $search = $request->input('search', '');
+        $category = $request->input('category', 'all');
+
+        $query = Product::where('seller_id', Auth::id());
+
+        if (!empty($search)) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+        }
+
+        if ($category !== 'all') {
+            $query->where('category', $category);
+        }
+
+        $products = $query->latest()->paginate(8);
 
         return ProductResource::collection($products);
     }
@@ -94,17 +126,26 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::findOrFail($id);
-        
-        $sellerProducts = Product::where('seller_id', $product->seller_id)
-            ->where('id', '!=', $id)
-            ->limit(8)
-            ->get();
+        // Build cache key
+        $cacheKey = "product:{$id}:detail";
 
-        return response()->json([
-            'product' => new ProductResource($product),
-            'seller_products' => ProductResource::collection($sellerProducts),
-        ]);
+        // Get from cache or database
+        $response = Cache::tags([CacheService::TAG_PRODUCTS])
+            ->remember($cacheKey, CacheService::PRODUCT_DETAIL_TTL, function () use ($id) {
+                $product = Product::with('seller')->findOrFail($id);
+                
+                $sellerProducts = Product::where('seller_id', $product->seller_id)
+                    ->where('id', '!=', $id)
+                    ->limit(8)
+                    ->get();
+
+                return [
+                    'product' => new ProductResource($product),
+                    'seller_products' => ProductResource::collection($sellerProducts),
+                ];
+            });
+
+        return response()->json($response);
     }
 
     /**
