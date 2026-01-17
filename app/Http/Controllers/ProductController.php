@@ -94,7 +94,17 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        return new ProductResource(Product::findOrFail($id));
+        $product = Product::findOrFail($id);
+        
+        $sellerProducts = Product::where('seller_id', $product->seller_id)
+            ->where('id', '!=', $id)
+            ->limit(8)
+            ->get();
+
+        return response()->json([
+            'product' => new ProductResource($product),
+            'seller_products' => ProductResource::collection($sellerProducts),
+        ]);
     }
 
     /**
