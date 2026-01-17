@@ -14,9 +14,16 @@ class CartItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $price = (float) ($this->product->price ?? 0);
+
         return [
-            'product'  => $this->product->name,
-            'quantity' => $this->quantity
+            'product_id' => $this->product->id,
+            'name'       => $this->product->name,
+            'image'      => $this->product->image ?? null,
+            'category'   => $this->product->category ?? null,
+            'price'      => $price,
+            'quantity'   => (int) $this->quantity,
+            'line_total' => (float) ($this->quantity * $price),
         ];
     }
 }
