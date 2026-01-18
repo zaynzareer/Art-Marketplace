@@ -17,14 +17,23 @@
                 ${{ $product['price'] }}
             </p>
 
-            <button
-                wire:click="addToCart({{ $product['id'] }})"
-                wire:target="addToCart({{ $product['id'] }})"
-                wire:loading.class="opacity-70 cursor-not-allowed"
-                class="bg-black text-white text-sm px-3 py-1 rounded-md"
-            >
-                Add
-            </button>
+            <div class="flex gap-2">
+                <a
+                    href="{{ route('buyer.products.show', $product['id']) }}"
+                    class="border border-gray-300 text-gray-700 text-sm px-3 py-1 rounded-md hover:bg-gray-50 transition"
+                >
+                    View
+                </a>
+
+                <button
+                    wire:click="addToCart({{ $product['id'] }})"
+                    wire:target="addToCart({{ $product['id'] }})"
+                    wire:loading.class="opacity-70 cursor-not-allowed"
+                    class="bg-black text-white text-sm px-3 py-1 rounded-md"
+                >
+                    Add
+                </button>
+            </div>
         </div>
     </div>
 </div>

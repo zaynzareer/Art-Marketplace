@@ -32,6 +32,9 @@
                 </header>
             @endif
 
+            <!-- Toast Notifications -->
+            @livewire('toast')
+
             <!-- Page Content -->
             <main>
                 {{ $slot }}
@@ -41,5 +44,8 @@
         @stack('modals')
 
         @livewireScripts
+
+        <x-footer />
+
     </body>
 </html>
