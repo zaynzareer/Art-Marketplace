@@ -45,6 +45,7 @@ class ProductView extends Component
             ]);
 
         $this->dispatch('notify', message: 'Product added to cart successfully!', type: 'success');
+        $this->dispatch('cart-updated');
     }
 
     public function mount()

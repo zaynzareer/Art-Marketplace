@@ -40,6 +40,7 @@ class CartPage extends Component
         }
 
         $this->fetchCart();
+        $this->dispatch('cart-updated');
     }
 
     public function removeItem($productId)
@@ -54,6 +55,7 @@ class CartPage extends Component
         }
 
         $this->fetchCart();
+        $this->dispatch('cart-updated');
     }
 
     public function checkout()

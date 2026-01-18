@@ -48,9 +48,9 @@ class Dashboard extends Component
             'sort'     => $this->sort,
             'page'     => $this->page,
         ])->json();
-
-        $this->products = $response['data'];
-        $this->meta     = $response['meta'];
+        
+        $this->products = $response['data'] ?? [];
+        $this->meta     = $response['meta'] ?? [];
     }
 
     public function addToCart($productId)
@@ -66,6 +66,8 @@ class Dashboard extends Component
         } else {
             $this->dispatch('notify', message: 'Failed to add product to cart', type: 'error');
         }
+
+        $this->dispatch('cart-updated');
     }
 
     public function resetPage()
