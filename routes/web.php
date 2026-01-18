@@ -1,10 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/about-us', function () {
+    return view('about-us');
+})->name('about');
+
+Route::get('/contact-us', function () {
+    return view('contact-us');
+})->name('contact');
 
 Route::middleware([
     'auth:sanctum',
@@ -14,4 +24,44 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+});
+
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+
+    Route::middleware('role:seller')->group(function () {
+        // Product management views
+        Route::get('products', function () {
+            return view('seller.products');
+        })->name('products.index');
+
+        Route::get('products/create', function () {
+            return view('seller.add-or-edit-product');
+        })->name('products.create');
+
+        Route::get('products/{productId}/edit', function ($productId) {
+            return view('seller.add-or-edit-product', ['productId' => $productId]);
+        })->name('products.edit');
+
+        Route::get('orders', function () {
+            return view('seller.orders');
+        })->name('seller.orders');
+    });
+
+    Route::middleware('role:buyer')->prefix('buyer')->group(function () {
+
+        Route::get('products/{product}', function ($product) {
+            return view('buyer.product-view', ['productId' => $product]);
+        })->name('buyer.products.show');
+
+        Route::get('cart', function () {
+            return view('buyer.cart');
+        })->name('buyer.cart');
+
+        Route::get('orders', function () {
+            return view('buyer.orders');
+        })->name('buyer.orders');
+
+        Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+        Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
+    });
 });
