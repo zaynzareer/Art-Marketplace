@@ -26,7 +26,10 @@ class SellerDashboardController extends Controller
             abort(403, 'Token does not have dashboard:read scope');
         }
 
+        // Get seller's ID
         $sellerId = Auth::id();
+
+        // Generate Cache key
         $cacheKey = "seller:{$sellerId}:metrics";
 
         // Get from cache or database
@@ -75,37 +78,5 @@ class SellerDashboardController extends Controller
             });
 
         return new DashboardResource($dashboardData);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

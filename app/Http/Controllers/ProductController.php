@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use App\Models\Product;
 use App\Services\CacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use App\Http\Resources\ProductResource;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,23 +26,23 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        // Get filters
         $search = $request->input('search', '');
         $category = $request->input('category', 'all');
         $sort = $request->input('sort', 'newest');
-        $page = $request->input('page', 1);
 
         // Skip cache for search queries due to high variability
         if (!empty($search)) {
-            return $this->fetchProductsFromDatabase($search, $category, $sort, $page);
+            return $this->fetchProductsFromDatabase($search, $category, $sort);
         }
 
         // Build cache key
-        $cacheKey = "products:list:" . ($category === 'all' ? 'all' : $category) . ":p{$page}:sort-{$sort}";
+        $cacheKey = "products:list:" . ($category === 'all' ? 'all' : $category) . ":sort-{$sort}";
 
         // Get from cache or database
         $products = Cache::tags([CacheService::TAG_PRODUCTS])
-            ->remember($cacheKey, CacheService::PRODUCT_LIST_TTL, function () use ($search, $category, $sort, $page) {
-                return $this->fetchProductsFromDatabase($search, $category, $sort, $page);
+            ->remember($cacheKey, CacheService::PRODUCT_LIST_TTL, function () use ($search, $category, $sort) {
+                return $this->fetchProductsFromDatabase($search, $category, $sort);
             });
 
         return $products;
@@ -47,8 +51,9 @@ class ProductController extends Controller
     /**
      * Fetch products from database with filters
      */
-    private function fetchProductsFromDatabase($search = '', $category = 'all', $sort = 'newest', $page = 1)
-    {
+    private function fetchProductsFromDatabase($search = '', $category = 'all', $sort = 'newest')
+    {   
+        // Build query
         $query = Product::query()->with('seller');
 
         // Search filter
@@ -70,6 +75,7 @@ class ProductController extends Controller
             default      => $query->orderBy('created_at', 'desc'),
         };
 
+        // Pagination
         $products = $query->paginate(10);
 
         return ProductResource::collection($products);
@@ -79,23 +85,29 @@ class ProductController extends Controller
      * Display a listing of the resource for the authenticated seller.
      */
     public function sellerIndex(Request $request)
-    {
+    {   
+        // Authorization check using Policy
         $this->authorize('viewAny', Product::class);
 
+        // Get filters
         $search = $request->input('search', '');
         $category = $request->input('category', 'all');
 
+        // Build query
         $query = Product::where('seller_id', Auth::id());
 
+        // Search filter
         if (!empty($search)) {
             $query->where('name', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%");
         }
 
+        // Category filter
         if ($category !== 'all') {
             $query->where('category', $category);
         }
 
+        // Pagination
         $products = $query->latest()->paginate(8);
 
         return ProductResource::collection($products);
@@ -108,30 +120,69 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Product::class);
-        
-        // Validate Sanctum token scope
-        if (!$request->user()->tokenCan('products:create')) {
-            abort(403, 'Token does not have products:create scope');
+        try {
+            // Authorization check using Policy
+            $this->authorize('create', Product::class);
+            
+            // Validate Sanctum token scope
+            if (!$request->user()->tokenCan('products:create')) {
+                abort(403, 'Token does not have products:create scope');
+            }
+
+            $validated = $request->validate([
+                'name'        => 'required|string|max:100|min:3',
+                'description' => 'nullable|string|max:1000',
+                'price'       => 'required|numeric|min:0.01|max:999999.99',
+                'category'    => 'required|string|in:painting,sculpture,photography,digital,mixed-media,other',
+                'image'       => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
+            ]);
+            
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                
+                // Additional security: Check actual image dimensions
+                $imageSize = getimagesize($image->getRealPath());
+                if (!$imageSize || $imageSize[0] > 4000 || $imageSize[1] > 4000) {
+                    return response()->json([
+                        'message' => 'Image dimensions must not exceed 4000x4000 pixels'
+                    ], 422);
+                }
+                
+                // Store image
+                $imagePath = $image->store('products', 'public');
+                $validated['image'] = $imagePath;
+            }
+
+            // Assign authenticated user as seller
+            $validated['seller_id'] = Auth::id();
+
+            $product = Product::create($validated);
+            
+            return response()->json([
+                'message' => 'Product created successfully',
+                'data' => new ProductResource($product)
+            ], 201);
+            
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (AuthorizationException $e) {
+            return response()->json([
+                'message' => 'Unauthorized to create products'
+            ], 403);
+        } catch (\Exception $e) {
+            Log::error('Product creation failed: ' . $e->getMessage(), [
+                'user_id' => Auth::id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'message' => 'Failed to create product. Please try again later.'
+            ], 500);
         }
-
-        $validated = $request->validate([
-            'name'        => 'required|string|max:50',
-            'description' => 'nullable|string',
-            'price'       => 'required|numeric|min:0',
-            'category'    => 'required|string',
-            'image'       => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-        
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-            $validated['image'] = $imagePath;
-        }
-
-        $validated['seller_id'] = Auth::id();
-
-        $product = Product::create($validated);
-        return new ProductResource($product);
     }
 
     /**
@@ -146,7 +197,8 @@ class ProductController extends Controller
         $response = Cache::tags([CacheService::TAG_PRODUCTS])
             ->remember($cacheKey, CacheService::PRODUCT_DETAIL_TTL, function () use ($id) {
                 $product = Product::with('seller')->findOrFail($id);
-                
+            
+                // Fetch other products from the same seller
                 $sellerProducts = Product::where('seller_id', $product->seller_id)
                     ->where('id', '!=', $id)
                     ->limit(8)
@@ -168,30 +220,79 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $product = Product::findOrFail($id);
+        try {
+            // Validate ID format
+            if (!is_numeric($id) || $id <= 0) {
+                return response()->json(['message' => 'Invalid product ID'], 400);
+            }
 
-        $this->authorize('update', $product);
-        
-        // Validate Sanctum token scope
-        if (!$request->user()->tokenCan('products:update')) {
-            abort(403, 'Token does not have products:update scope');
+            // Retrieve product
+            $product = Product::findOrFail($id);
+
+            // Authorization check using Policy
+            $this->authorize('update', $product);
+            
+            // Validate Sanctum token scope
+            if (!$request->user()->tokenCan('products:update')) {
+                abort(403, 'Token does not have products:update scope');
+            }
+
+            $validated = $request->validate([
+                'name'        => 'sometimes|required|string|max:100|min:3',
+                'description' => 'sometimes|nullable|string|max:1000',
+                'price'       => 'sometimes|required|numeric|min:0.01|max:999999.99',
+                'category'    => 'sometimes|required|string|in:painting,sculpture,photography,digital,mixed-media,other',
+                'image'       => 'sometimes|image|mimes:jpeg,png,jpg,webp|max:5120',
+            ]);
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                
+                // Validate image dimensions
+                $imageSize = getimagesize($image->getRealPath());
+                if (!$imageSize || $imageSize[0] > 4000 || $imageSize[1] > 4000) {
+                    return response()->json([
+                        'message' => 'Image dimensions must not exceed 4000x4000 pixels'
+                    ], 422);
+                }
+                
+                // Delete old image
+                if ($product->image) {
+                    Storage::disk('public')->delete($product->image);
+                }
+                
+                // Store new image
+                $imagePath = $image->store('products', 'public');
+                $validated['image'] = $imagePath;
+            }
+
+            $product->update($validated);
+            
+            return response()->json([
+                'message' => 'Product updated successfully',
+                'data' => new ProductResource($product)
+            ], 200);
+            
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Product not found'], 404);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (AuthorizationException $e) {
+            return response()->json(['message' => 'Unauthorized to update this product'], 403);
+        } catch (\Exception $e) {
+            Log::error('Product update failed: ' . $e->getMessage(), [
+                'product_id' => $id,
+                'user_id' => Auth::id()
+            ]);
+            
+            return response()->json([
+                'message' => 'Failed to update product. Please try again later.'
+            ], 500);
         }
-
-        $validated = $request->validate([
-            'name'        => 'sometimes|required|string|max:50',
-            'description' => 'sometimes|nullable|string',
-            'price'       => 'sometimes|required|numeric|min:0',
-            'category'    => 'sometimes|required|string',
-            'image'       => 'sometimes|required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
-            $validated['image'] = $imagePath;
-        }
-
-        $product->update($validated);
-        return new ProductResource($product);
     }
 
     /**
@@ -201,20 +302,53 @@ class ProductController extends Controller
      */
     public function destroy(Request $request, string $id)
     {
-        $product = Product::findOrFail($id);
+        try {
+            // Validate ID format
+            if (!is_numeric($id) || $id <= 0) {
+                return response()->json(['message' => 'Invalid product ID'], 400);
+            }
+            
+            // Retrieve product
+            $product = Product::findOrFail($id);
 
-        $this->authorize('delete', $product);
-        
-        // Validate Sanctum token scope
-        if (!$request->user()->tokenCan('products:delete')) {
-            abort(403, 'Token does not have products:delete scope');
+            // Authorization check using Policy
+            $this->authorize('delete', $product);
+            
+            // Validate Sanctum token scope
+            if (!$request->user()->tokenCan('products:delete')) {
+                abort(403, 'Token does not have products:delete scope');
+            }
+
+            // Check if product has associated orders (prevent deletion if sold)
+            if ($product->orderItems()->exists()) {
+                return response()->json([
+                    'message' => 'Cannot delete product with existing orders. Consider marking it as unavailable instead.'
+                ], 409);
+            }
+
+            // Delete image file
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+            
+            // Delete product
+            $product->delete();
+
+            return response()->json(['message' => 'Product deleted successfully'], 200);
+            
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Product not found'], 404);
+        } catch (AuthorizationException $e) {
+            return response()->json(['message' => 'Unauthorized to delete this product'], 403);
+        } catch (\Exception $e) {
+            Log::error('Product deletion failed: ' . $e->getMessage(), [
+                'product_id' => $id,
+                'user_id' => Auth::id()
+            ]);
+            
+            return response()->json([
+                'message' => 'Failed to delete product. Please try again later.'
+            ], 500);
         }
-
-        Storage::disk('public')->delete($product->image);
-        
-        $product->delete();
-
-        return response()->json(['message' => 'Product deleted successfully.'], 200);
-
     }
 }
