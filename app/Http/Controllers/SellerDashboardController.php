@@ -16,9 +16,16 @@ class SellerDashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
+     * Requires: dashboard:read token scope
      */
-    public function index()
+    public function index(Request $request)
     {
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('dashboard:read')) {
+            abort(403, 'Token does not have dashboard:read scope');
+        }
+
         $sellerId = Auth::id();
         $cacheKey = "seller:{$sellerId}:metrics";
 

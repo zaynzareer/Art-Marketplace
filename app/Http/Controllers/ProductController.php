@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Product;
 use App\Services\CacheService;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      * 
@@ -78,6 +80,8 @@ class ProductController extends Controller
      */
     public function sellerIndex(Request $request)
     {
+        $this->authorize('viewAny', Product::class);
+
         $search = $request->input('search', '');
         $category = $request->input('category', 'all');
 
@@ -99,9 +103,18 @@ class ProductController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * Requires: products:create token scope
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Product::class);
+        
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('products:create')) {
+            abort(403, 'Token does not have products:create scope');
+        }
+
         $validated = $request->validate([
             'name'        => 'required|string|max:50',
             'description' => 'nullable|string',
@@ -150,10 +163,19 @@ class ProductController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * 
+     * Requires: products:update token scope
      */
     public function update(Request $request, string $id)
     {
         $product = Product::findOrFail($id);
+
+        $this->authorize('update', $product);
+        
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('products:update')) {
+            abort(403, 'Token does not have products:update scope');
+        }
 
         $validated = $request->validate([
             'name'        => 'sometimes|required|string|max:50',
@@ -174,10 +196,19 @@ class ProductController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * Requires: products:delete token scope
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         $product = Product::findOrFail($id);
+
+        $this->authorize('delete', $product);
+        
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('products:delete')) {
+            abort(403, 'Token does not have products:delete scope');
+        }
 
         Storage::disk('public')->delete($product->image);
         

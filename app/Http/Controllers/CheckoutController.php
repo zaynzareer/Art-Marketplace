@@ -13,9 +13,16 @@ class CheckoutController extends Controller
 {
     /**
      * Create Stripe checkout session using API URLs for success/cancel.
+     * 
+     * Requires: checkout:process token scope
      */
     public function stripeCheckout()
     {
+        // Validate Sanctum token scope
+        if (!request()->user()->tokenCan('checkout:process')) {
+            abort(403, 'Token does not have checkout:process scope');
+        }
+
         $user = Auth::user();
 
         $cart = $user->cart()->with('cartItems.product')->first();

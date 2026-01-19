@@ -2,14 +2,19 @@
 
 namespace App\Providers;
 
+use App\Listeners\CreateApiTokenOnLogin;
+use App\Listeners\RevokeApiTokenOnLogin;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Product;
 use App\Observers\CartItemObserver;
 use App\Observers\OrderObserver;
 use App\Observers\ProductObserver;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,8 +38,20 @@ class AppServiceProvider extends ServiceProvider
         CartItem::observe(CartItemObserver::class);
         Order::observe(OrderObserver::class);
 
+        // Register event listeners for token management
+        $this->registerEventListeners();
+
         // Register API rate limiters
         $this->configureRateLimiting();
+    }
+
+    /**
+     * Register event listeners for login/logout token events.
+     */
+    protected function registerEventListeners(): void
+    {
+        Event::listen(Login::class, CreateApiTokenOnLogin::class);
+        Event::listen(Logout::class, RevokeApiTokenOnLogin::class);
     }
 
     /**

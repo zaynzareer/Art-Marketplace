@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Services\CacheService;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -22,9 +24,18 @@ class CartController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * Requires: cart:write token scope
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Cart::class);
+        
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('cart:write')) {
+            abort(403, 'Token does not have cart:write scope');
+        }
+
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
@@ -54,10 +65,23 @@ class CartController extends Controller
 
     /**
      * Display the specified resource.
+     * 
+     * Requires: cart:read token scope
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        $buyerId = (int) $id;
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('cart:read')) {
+            abort(403, 'Token does not have cart:read scope');
+        }
+
+        $buyerId = Auth::id();
+
+        // Prevent accessing another user's cart via URL manipulation
+        if ((int) $id !== $buyerId) {
+            abort(403, 'Unauthorized access to cart.');
+        }
+
         $cacheKey = "cart:user:{$buyerId}";
 
         // Get from cache or database
@@ -67,6 +91,8 @@ class CartController extends Controller
                     ->where('user_id', $buyerId)
                     ->firstOrFail();
             });
+
+        $this->authorize('view', $cart);
 
         return new CartResource($cart);
     }
@@ -81,11 +107,20 @@ class CartController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * Requires: cart:write token scope
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('cart:write')) {
+            abort(403, 'Token does not have cart:write scope');
+        }
+
         $buyerId = Auth::id();
         $cart = Cart::where('user_id', $buyerId)->firstOrFail();
+
+        $this->authorize('delete', $cart);
 
         $item = CartItem::where('cart_id', $cart->id)
             ->where('product_id', $id)->first();

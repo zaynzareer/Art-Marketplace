@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Order;
 use App\Services\CacheService;
 use Illuminate\Http\Request;
@@ -11,11 +12,21 @@ use App\Http\Resources\OrderResource;
 
 class OrderController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
+     * 
+     * Requires: orders:read token scope
      */
-    public function index()
+    public function index(Request $request)
     {
+        $this->authorize('viewAny', Order::class);
+        
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('orders:read')) {
+            abort(403, 'Token does not have orders:read scope');
+        }
+
         $buyerId = Auth::id();
         $cacheKey = "orders:buyer:{$buyerId}";
 
@@ -33,9 +44,18 @@ class OrderController extends Controller
 
     /**
      * Display seller's orders.
+     * 
+     * Requires: orders:read token scope
      */
-    public function sellerIndex()
+    public function sellerIndex(Request $request)
     {
+        $this->authorize('viewAny', Order::class);
+        
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('orders:read')) {
+            abort(403, 'Token does not have orders:read scope');
+        }
+
         $sellerId = Auth::id();
         $cacheKey = "orders:seller:{$sellerId}";
 
@@ -56,39 +76,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $cart = Auth::user()->cart()->with('cartItems.product')->firstOrFail();
-
-        if ($cart->cartItems->isEmpty()) {
-            return response()->json(['message' => 'Cart is empty.'], 400);
-        }
-
-        // Group cart items by seller
-        $itemsBySeller = $cart->cartItems->groupBy(fn($item) => $item->product->seller_id);
-
-        $orders = [];
-
-        // Create separate order for each seller
-        foreach ($itemsBySeller as $sellerId => $items) {
-            $order = Order::create([
-                'buyer_id' => Auth::id(),
-                'seller_id' => $sellerId,
-                'status' => 'paid',
-            ]);
-
-            foreach ($items as $cartItem) {
-                $order->orderItems()->create([
-                    'product_id' => $cartItem->product_id,
-                    'quantity'   => $cartItem->quantity,
-                    'unit_price' => $cartItem->product->price,
-                ]);
-            }
-
-            $orders[] = $order;
-        }
-
-        $cart->cartItems()->delete();
-
-        return OrderResource::collection(collect($orders)->load('orderItems.product', 'buyer'));
+        //
     }
 
     /**
@@ -101,10 +89,19 @@ class OrderController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * 
+     * Requires: orders:update-status token scope
      */
     public function update(Request $request, string $orderId)
     {
         $order = Order::with('orderItems.product')->findOrFail($orderId);
+
+        $this->authorize('update', $order);
+        
+        // Validate Sanctum token scope
+        if (!$request->user()->tokenCan('orders:update-status')) {
+            abort(403, 'Token does not have orders:update-status scope');
+        }
 
         $validated = $request->validate([
             'status' => 'required|string|in:pending,processing,shipped,delivered,cancelled',
