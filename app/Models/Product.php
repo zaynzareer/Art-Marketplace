@@ -22,6 +22,27 @@ class Product extends Model
         'seller_id'
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'price' => 'decimal:2',
+        'seller_id' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    /**
+     * The attributes that should be guarded from mass assignment.
+     * 
+     * @var array<int, string>
+     */
+    protected $guarded = [
+        'id',
+    ];
+
     public function seller(): BelongsTo
     {
         return $this->belongsTo(User::class);

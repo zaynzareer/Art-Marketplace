@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
@@ -15,6 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
+    use Billable;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -35,6 +37,20 @@ class User extends Authenticatable implements MustVerifyEmail
         'city',
         'street',
         'role',
+    ];
+
+    /**
+     * The attributes that should be guarded from mass assignment.
+     * 
+     * @var array<int, string>
+     */
+    protected $guarded = [
+        'id',
+        'email_verified_at',
+        'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'current_team_id',
     ];
 
     /**
