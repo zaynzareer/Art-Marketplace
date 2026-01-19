@@ -11,42 +11,58 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8
-                sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
+
+                <!-- Seller Navigation -->
+                @can('view-seller-nav')
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link href="{{ route('products.index') }}">
+                            {{ __('My Products') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link href="{{ route('seller.orders') }}">
+                            {{ __('Sales Orders') }}
+                        </x-nav-link>
+                    </div>
+                @endcan
+
+                <!-- Buyer Navigation -->
+                @can('view-buyer-nav')
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link href="{{ route('dashboard') }}">
+                            {{ __('Browse Products') }}
+                        </x-nav-link>
+                    </div>
+                    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <x-nav-link href="{{ route('buyer.orders') }}">
+                            {{ __('Purchase History') }}
+                        </x-nav-link>
+                    </div>
+                @endcan
+
+                <!-- Shared Navigation -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('products.index') }}">
-                        {{ __('Products') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('seller.orders') }}" >
-                        {{ __('Orders') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('buyer.orders') }}" >
-                        {{ __('Orders') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('about') }}" >
+                    <x-nav-link href="{{ route('about') }}">
                         {{ __('About Us') }}
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('contact') }}" >
+                    <x-nav-link href="{{ route('contact') }}">
                         {{ __('Contact Us') }}
                     </x-nav-link>
                 </div>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <!-- Cart Badge -->
-                @livewire('buyer.cart-badge')
+                <!-- Cart Badge (Buyer Only) -->
+                @can('view-buyer-nav')
+                    @livewire('buyer.cart-badge')
+                @endcan
 
                 <!-- Teams Dropdown -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
@@ -168,8 +184,36 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+            
+            <!-- Seller Navigation (Mobile) -->
+            @can('view-seller-nav')
+                <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('products.index') }}">
+                    {{ __('My Products') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('seller.orders') }}">
+                    {{ __('Sales Orders') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            <!-- Buyer Navigation (Mobile) -->
+            @can('view-buyer-nav')
+                <x-responsive-nav-link href="{{ route('dashboard') }}">
+                    {{ __('Browse Products') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('buyer.orders') }}">
+                    {{ __('Purchase History') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            <!-- Shared Navigation (Mobile) -->
+            <x-responsive-nav-link href="{{ route('about') }}">
+                {{ __('About Us') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('contact') }}">
+                {{ __('Contact Us') }}
             </x-responsive-nav-link>
         </div>
 
