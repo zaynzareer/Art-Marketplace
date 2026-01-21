@@ -10,6 +10,7 @@ class Dashboard extends Component
 {
     public $metrics = [];
     public $recentOrders = [];
+    public $chartData = [];
 
     public function fetchDashboardData()
     {
@@ -25,6 +26,7 @@ class Dashboard extends Component
             ];
             
             $this->recentOrders = $data['recent_orders'];
+            $this->chartData = $data['chart_data'] ?? [];
         } else {
             $this->dispatch('notify', message: 'Failed to load dashboard data', type: 'error');
         }

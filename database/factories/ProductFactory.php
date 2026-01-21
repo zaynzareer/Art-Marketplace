@@ -21,8 +21,8 @@ class ProductFactory extends Factory
             'name' => fake()->word(),
             'description' => fake()->sentence(),
             'price' => fake()->randomFloat(2, 1, 100),
-            'category' => fake()->word(),
-            'image' => fake()->imageUrl(640, 480),
+            'category' => fake()->randomElement(['painting', 'sculpture', 'pottery', 'collectibles']),
+            'image' => 'placeholder.png',
             'seller_id' => User::where('role', 'seller')->inRandomOrder()->first()->id,
         ];
     }

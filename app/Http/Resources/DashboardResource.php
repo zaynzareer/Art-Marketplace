@@ -19,6 +19,7 @@ class DashboardResource extends JsonResource
             'total_orders' => $this->resource['total_orders'],
             'product_count' => $this->resource['product_count'],
             'recent_orders' => OrderResource::collection($this->resource['recent_orders']),
+            'chart_data' => $this->resource['chart_data'] ?? [],
         ];
     }
 }
