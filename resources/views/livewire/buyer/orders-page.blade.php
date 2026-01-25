@@ -54,7 +54,7 @@
                             @foreach ($order['order_items'] as $item)
                                 <div class="flex items-center py-4">
                                     <img
-                                        src="{{ asset('storage/' . $item['image']) }}"
+                                        src="{{ Storage::url($item['image']) }}"
                                         alt="{{ $item['name'] }}"
                                         class="w-20 h-20 object-cover rounded-md border"
                                     >

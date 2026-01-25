@@ -30,7 +30,7 @@
                 <div class="mt-3 flex items-center gap-4">
                     <div class="relative">
                         <div class="size-20 rounded-2xl overflow-hidden border-2 border-slate-200" x-show="! photoPreview">
-                            <img src="{{ asset('storage/' . $this->user->profile_photo_path) }}" alt="{{ $this->user->name }}" class="size-full object-cover">
+                            <img src="{{ Storage::url($this->user->profile_photo_path) }}" alt="{{ $this->user->name }}" class="size-full object-cover">
                         </div>
                         <div class="size-20 rounded-2xl overflow-hidden border-2 border-slate-200" x-show="photoPreview" style="display: none;">
                             <span class="block size-full bg-cover bg-no-repeat bg-center"

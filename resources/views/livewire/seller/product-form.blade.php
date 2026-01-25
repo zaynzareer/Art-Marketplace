@@ -69,7 +69,7 @@
                         <img src="{{ $image->temporaryUrl() }}"
                              class="h-40 rounded-md object-cover">
                     @elseif ($existingImage)
-                        <img src="{{ asset('storage/' . $existingImage) }}"
+                        <img src="{{ Storage::url($existingImage) }}"
                              class="h-40 rounded-md object-cover">
                     @endif
                 </div>

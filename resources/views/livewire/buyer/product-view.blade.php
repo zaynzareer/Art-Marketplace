@@ -9,7 +9,7 @@
         <!-- Image -->
         <div class="bg-white border rounded-lg overflow-hidden shadow-sm">
             <img
-                src="{{ asset('storage/' . $product['image']) }}"
+                src="{{ Storage::url($product['image']) }}"
                 alt="{{ $product['name'] }}"
                 class="w-full h-[420px] object-cover"
             >

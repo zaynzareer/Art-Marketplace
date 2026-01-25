@@ -1,6 +1,6 @@
 <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100 max-w-xs">
     <div class="w-full h-44 bg-gray-50">
-        <img src="{{ asset('storage/' . $product['image']) }}" class="w-full h-full object-cover">
+        <img src="{{ Storage::url($product['image']) }}" class="w-full h-full object-cover">
     </div>
 
     <div class="p-4">

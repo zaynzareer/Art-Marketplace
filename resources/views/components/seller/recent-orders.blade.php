@@ -16,7 +16,7 @@
                 if ($image) {
                     $image = str_starts_with($image, 'http') || str_starts_with($image, '/storage/')
                         ? $image
-                        : asset('storage/' . ltrim($image, '/'));
+                        : Storage::url(ltrim($image, '/'));
                 } else {
                     $image = asset('images/placeholder.png');
                 }

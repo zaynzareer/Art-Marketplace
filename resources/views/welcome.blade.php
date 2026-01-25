@@ -62,7 +62,7 @@
                     </div>
                 </div>
                 <div>
-                    <img src="{{ asset('storage/img1.jpg') }}" alt="Gallery" class="rounded-lg shadow-md">
+                    <img src="{{ Storage::url('img1.jpg') }}" alt="Gallery" class="rounded-lg shadow-md">
                 </div>
             </section>
 
@@ -73,7 +73,7 @@
                 <p class="text-gray-600 mb-10">Handpicked masterpieces from our curated selection of contemporary and classic artworks</p>
                 <div class="grid md:grid-cols-4 gap-6">
                     <div class="bg-white shadow rounded-lg overflow-hidden">
-                        <img src="{{ asset('storage/img4.jpg') }}" alt="Art" class="w-full h-48 object-cover">
+                        <img src="{{ Storage::url('img4.jpg') }}" alt="Art" class="w-full h-48 object-cover">
                         <div class="p-4 text-left">
                         <h3 class="font-semibold">Abstract Expression</h3>
                         <p class="text-sm text-gray-500">by Elena Rodriguez</p>
@@ -82,7 +82,7 @@
                         </div>
                     </div>
                     <div class="bg-white shadow rounded-lg overflow-hidden">
-                        <img src="{{ asset('storage/img3.jpg') }}" alt="Art" class="w-full h-48 object-cover">
+                        <img src="{{ Storage::url('img3.jpg') }}" alt="Art" class="w-full h-48 object-cover">
                         <div class="p-4 text-left">
                         <h3 class="font-semibold">Gallery Masterpiece</h3>
                         <p class="text-sm text-gray-500">by Thomas Chen</p>
@@ -91,7 +91,7 @@
                         </div>
                     </div>
                     <div class="bg-white shadow rounded-lg overflow-hidden">
-                        <img src="{{ asset('storage/img5.jpg') }}" alt="Art" class="w-full h-48 object-cover">
+                        <img src="{{ Storage::url('img5.jpg') }}" alt="Art" class="w-full h-48 object-cover">
                         <div class="p-4 text-left">
                         <h3 class="font-semibold">Vintage Sculpture</h3>
                         <p class="text-sm text-gray-500">by Marie Dubois</p>
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                     <div class="bg-white shadow rounded-lg overflow-hidden">
-                        <img src="{{ asset('storage/img6.jpg') }}" alt="Art" class="w-full h-48 object-cover">
+                        <img src="{{ Storage::url('img6.jpg') }}" alt="Art" class="w-full h-48 object-cover">
                         <div class="p-4 text-left">
                         <h3 class="font-semibold">Ceramic Collection</h3>
                         <p class="text-sm text-gray-500">by Hiroshi Tanaka</p>
@@ -115,7 +115,7 @@
             <!-- About Section -->
             <section class="container mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
                 <div class="overflow-hidden">
-                    <img src="{{ asset('storage/img2.jpg') }}" alt="Studio" class="rounded-lg shadow-md max-h-80 w-full object-cover">
+                    <img src="{{ Storage::url('img2.jpg') }}" alt="Studio" class="rounded-lg shadow-md max-h-80 w-full object-cover">
                 </div>
                 <div>
                     <h2 class="text-2xl font-semibold mb-4">Our Story & Mission</h2>

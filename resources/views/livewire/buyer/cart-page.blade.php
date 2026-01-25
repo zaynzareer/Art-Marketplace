@@ -34,7 +34,7 @@
 
                                 {{-- Product --}}
                                 <div class="flex items-start space-x-4 md:flex-1">
-                                    <img src="{{ asset('storage/' . $item['image']) }}"
+                                    <img src="{{ Storage::url($item['image']) }}"
                                          class="w-24 h-20 object-cover rounded-md border">
                                     <div>
                                         <p class="text-sm font-semibold text-gray-900">

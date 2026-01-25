@@ -1,7 +1,7 @@
 @props(['product'])
 
 <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100 max-w-xs">
-    <img src="{{ asset('storage/' . $product['image']) }}" alt="{{ $product['name'] }}" class="w-full object-cover">
+    <img src="{{ Storage::url($product['image']) }}" alt="{{ $product['name'] }}" class="w-full object-cover">
 
     <div class="p-4">
         <div class="flex justify-between">

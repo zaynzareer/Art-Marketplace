@@ -150,7 +150,7 @@ class ProductController extends Controller
                 }
                 
                 // Store image
-                $imagePath = $image->store('products', 'public');
+                $imagePath = $image->store('products');
                 $validated['image'] = $imagePath;
             }
 
@@ -263,7 +263,7 @@ class ProductController extends Controller
                 }
                 
                 // Store new image
-                $imagePath = $image->store('products', 'public');
+                $imagePath = $image->store('products');
                 $validated['image'] = $imagePath;
             }
 

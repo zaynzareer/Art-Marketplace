@@ -3,7 +3,7 @@
         <div class="max-w-xl w-40%">
             <div class="rounded-3xl border border-slate-200 bg-white shadow-sm p-8 sm:p-10">
                 <div class="flex items-center gap-3 mb-6">
-                    <img src="{{ asset('storage/logo.png') }}" alt="Art Marketplace Logo" class="h-10 w-10 rounded-xl" />
+                    <img src="{{ Storage::url('logo.png') }}" alt="Art Marketplace Logo" class="h-10 w-10 rounded-xl" />
                     <div>
                         <p class="text-xs uppercase tracking-wide text-slate-500">Email verification</p>
                         <p class="text-base font-semibold text-slate-900">Check your inbox</p>
