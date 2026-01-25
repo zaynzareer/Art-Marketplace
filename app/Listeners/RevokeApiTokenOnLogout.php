@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class RevokeApiTokenOnLogin
+class RevokeApiTokenOnLogout
 {
     /**
      * Create the event listener.

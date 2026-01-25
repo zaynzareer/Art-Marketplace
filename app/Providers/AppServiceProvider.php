@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Listeners\CreateApiTokenOnLogin;
-use App\Listeners\RevokeApiTokenOnLogin;
+use App\Listeners\RevokeApiTokenOnLogout;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Product;
@@ -51,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
     protected function registerEventListeners(): void
     {
         Event::listen(Login::class, CreateApiTokenOnLogin::class);
-        Event::listen(Logout::class, RevokeApiTokenOnLogin::class);
+        Event::listen(Logout::class, RevokeApiTokenOnLogout::class);
     }
 
     /**
