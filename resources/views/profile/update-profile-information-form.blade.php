@@ -30,7 +30,11 @@
                 <div class="mt-3 flex items-center gap-4">
                     <div class="relative">
                         <div class="size-20 rounded-2xl overflow-hidden border-2 border-slate-200" x-show="! photoPreview">
-                            <img src="{{ Storage::url($this->user->profile_photo_path) }}" alt="{{ $this->user->name }}" class="size-full object-cover">
+                            
+                                <img src="{{ $this->user->profile_photo_url }}"
+                                    alt="{{ $this->user->name }}"
+                                    class="size-full object-cover">
+                            
                         </div>
                         <div class="size-20 rounded-2xl overflow-hidden border-2 border-slate-200" x-show="photoPreview" style="display: none;">
                             <span class="block size-full bg-cover bg-no-repeat bg-center"
@@ -125,8 +129,8 @@
             <span class="text-sm font-medium text-green-600">Saved successfully!</span>
         </x-action-message>
 
-        <button type="submit" wire:loading.attr="disabled" wire:target="photo" class="inline-flex items-center px-6 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:translate-y-px transition shadow-sm">
-            Save Changes
-        </button>
+        <x-button>
+            Save Changes    
+        </x-button>
     </x-slot>
 </x-form-section>
