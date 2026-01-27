@@ -84,7 +84,7 @@ class ProductForm extends Component
                         ->asMultipart()
                         ->attach(
                             'image', 
-                            fopen($this->image->getRealPath(), 'r'),
+                            $this->image->get(),
                             $this->image->getClientOriginalName()
                         )
                         ->post(route('api.products.update', $this->productId), array_merge($payload, ['_method' => 'PUT']));
@@ -99,7 +99,7 @@ class ProductForm extends Component
                     ->asMultipart()
                     ->attach(
                         'image', 
-                        fopen($this->image->getRealPath(), 'r'),
+                        $this->image->get(),
                         $this->image->getClientOriginalName()
                     )
                     ->post(route('api.products.store'), $payload);            
