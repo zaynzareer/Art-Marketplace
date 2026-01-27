@@ -45,6 +45,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('products/sellerIndex', [ProductController::class, 'sellerIndex'])
             ->middleware('throttle:dashboard')
             ->name('api.products.sellerIndex');
+
+        // Seller product detail (edit context) - 60 requests/minute
+        // Requires: products:update scope
+        Route::get('products/{id}/seller', [ProductController::class, 'sellerShow'])
+            ->middleware('throttle:api-read')
+            ->name('api.products.seller.show');
         
         // Seller orders listing - 100 requests/minute
         // Requires: orders:read scope

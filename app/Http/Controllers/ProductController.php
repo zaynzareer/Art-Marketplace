@@ -30,6 +30,7 @@ class ProductController extends Controller
         $search = $request->input('search', '');
         $category = $request->input('category', 'all');
         $sort = $request->input('sort', 'newest');
+        $page = $request->input('page', 1);
 
         // Skip cache for search queries due to high variability
         if (!empty($search)) {
@@ -37,11 +38,12 @@ class ProductController extends Controller
         }
 
         // Build cache key
-        $cacheKey = "products:list:" . ($category === 'all' ? 'all' : $category) . ":sort-{$sort}";
+        $cacheKey = "products:list:" . ($category === 'all' ? 'all' : $category) . ":sort-{$sort}:page-{$page}";
 
         // Get from cache or database
         $products = Cache::tags([CacheService::TAG_PRODUCTS])
-            ->remember($cacheKey, CacheService::PRODUCT_LIST_TTL, function () use ($search, $category, $sort) {
+            ->remember($cacheKey, CacheService::PRODUCT_LIST_TTL, function () use ($search, $category, $sort, $page) {
+                // paginate() reads current page from request; include $page in cache key so each page caches separately
                 return $this->fetchProductsFromDatabase($search, $category, $sort);
             });
 
@@ -114,6 +116,33 @@ class ProductController extends Controller
     }
 
     /**
+     * Display a product for the authenticated seller (edit context).
+     * Requires: products:update token scope and ownership via policy.
+     */
+    public function sellerShow(Request $request, string $id)
+    {
+        // Basic ID validation
+        if (!is_numeric($id) || $id <= 0) {
+            return response()->json(['message' => 'Invalid product ID'], 400);
+        }
+
+        // Ensure token has appropriate scope for editing
+        if (!$request->user()->tokenCan('products:update')) {
+            return response()->json(['message' => 'Token does not have products:update scope'], 403);
+        }
+
+        // Retrieve and authorize ownership
+        $product = Product::with('seller')->findOrFail($id);
+
+        // Authorization check using Policy
+        $this->authorize('update', $product);
+
+        return response()->json([
+            'product' => new ProductResource($product),
+        ]);
+    }
+
+    /**
      * Store a newly created resource in storage.
      * 
      * Requires: products:create token scope
@@ -133,7 +162,7 @@ class ProductController extends Controller
                 'name'        => 'required|string|max:100|min:3',
                 'description' => 'nullable|string|max:1000',
                 'price'       => 'required|numeric|min:0.01|max:999999.99',
-                'category'    => 'required|string|in:painting,sculpture,photography,digital,mixed-media,other',
+                'category'    => 'required|string|in:Paintings,Collectibles,Pottery,Sculptures,Glass Art,Leather Goods,Textiles,Jewelry',
                 'image'       => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
             ]);
             
@@ -241,7 +270,7 @@ class ProductController extends Controller
                 'name'        => 'sometimes|required|string|max:100|min:3',
                 'description' => 'sometimes|nullable|string|max:1000',
                 'price'       => 'sometimes|required|numeric|min:0.01|max:999999.99',
-                'category'    => 'sometimes|required|string|in:painting,sculpture,photography,digital,mixed-media,other',
+                'category'    => 'sometimes|required|string|in:Paintings,Collectibles,Pottery,Sculptures,Glass Art,Leather Goods,Textiles,Jewelry',
                 'image'       => 'sometimes|image|mimes:jpeg,png,jpg,webp|max:5120',
             ]);
 

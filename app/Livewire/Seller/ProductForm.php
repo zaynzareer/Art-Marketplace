@@ -39,9 +39,19 @@ class ProductForm extends Component
     public function loadProduct()
     {
         try{ 
-            $product = Http::withToken(Session::get('api_token'))
-                ->get(route('api.products.show', $this->productId))->json('data');
+            // http call to fetch product details for editing
+            $response = Http::withToken(Session::get('api_token'))
+                ->get(route('api.products.seller.show', $this->productId));
 
+            // Extract product data from response
+            $product = $response->json('product');
+
+            // Handle case where product is not found
+            if (!$product) {
+                throw new \RuntimeException('Unable to load product details');
+            }   
+
+            // Populate component properties with product data
             $this->fill([
                 'name' => $product['name'],
                 'description' => $product['description'],
@@ -74,7 +84,7 @@ class ProductForm extends Component
                         ->asMultipart()
                         ->attach(
                             'image', 
-                            file_get_contents($this->image->getRealPath()), 
+                            fopen($this->image->getRealPath(), 'r'),
                             $this->image->getClientOriginalName()
                         )
                         ->post(route('api.products.update', $this->productId), array_merge($payload, ['_method' => 'PUT']));
@@ -89,7 +99,7 @@ class ProductForm extends Component
                     ->asMultipart()
                     ->attach(
                         'image', 
-                        file_get_contents($this->image->getRealPath()), 
+                        fopen($this->image->getRealPath(), 'r'),
                         $this->image->getClientOriginalName()
                     )
                     ->post(route('api.products.store'), $payload);            
