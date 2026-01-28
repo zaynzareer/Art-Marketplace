@@ -14,6 +14,9 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <!-- Favicon -->
+        <link rel="icon" href="{{ Storage::url('logo.png') }}" type="image/x-icon"/>
+
         <!-- Styles -->
         @livewireStyles
     </head>
