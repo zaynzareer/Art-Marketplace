@@ -1,8 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile Settings') }}
-        </h2>
+        <div class="flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-indigo-600">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15a7.488 7.488 0 00-5.982 3.725M9 9a3 3 0 106 0 3 3 0 00-6 0m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+                <h2 class="font-bold text-xl text-slate-900 leading-tight">
+                    {{ __('Profile Settings') }}
+                </h2>
+                <p class="text-sm text-slate-500 mt-0.5">{{ __('Manage your account settings and preferences') }}</p>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-10">

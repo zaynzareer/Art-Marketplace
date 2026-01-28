@@ -5,8 +5,9 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <h3 class="font-semibold text-lg mb-3">Crafty</h3>
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
+                        <img src="{{ Storage::url('logo.png') }}" alt="Crafty Logo" class="h-8 w-8 rounded-md">
+                        <h3 class="font-semibold text-lg text-slate-900">Crafty</h3>
                     </a>
                 </div>
 

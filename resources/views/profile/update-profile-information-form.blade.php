@@ -30,11 +30,9 @@
                 <div class="mt-3 flex items-center gap-4">
                     <div class="relative">
                         <div class="size-20 rounded-2xl overflow-hidden border-2 border-slate-200" x-show="! photoPreview">
-                            
-                                <img src="{{ $this->user->profile_photo_url }}"
-                                    alt="{{ $this->user->name }}"
-                                    class="size-full object-cover">
-                            
+                            <img src="{{ $this->user->profile_photo_url }}"
+                                alt="{{ $this->user->name }}"
+                                class="size-full object-cover">
                         </div>
                         <div class="size-20 rounded-2xl overflow-hidden border-2 border-slate-200" x-show="photoPreview" style="display: none;">
                             <span class="block size-full bg-cover bg-no-repeat bg-center"
@@ -44,11 +42,11 @@
                     </div>
                     
                     <div class="flex flex-col gap-2">
-                        <button type="button" x-on:click.prevent="$refs.photo.click()" class="inline-flex items-center px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:translate-y-px transition">
+                        <button type="button" x-on:click.prevent="$refs.photo.click()" class="inline-flex items-center px-6 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-200">
                             Select New Photo
                         </button>
                         @if ($this->user->profile_photo_path)
-                            <button type="button" wire:click="deleteProfilePhoto" class="inline-flex items-center px-4 py-2 bg-slate-100 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-200 transition">
+                            <button type="button" wire:click="deleteProfilePhoto" class="inline-flex items-center px-6 py-2.5 bg-slate-200 text-slate-900 text-sm font-semibold rounded-lg hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition duration-200">
                                 Remove Photo
                             </button>
                         @endif
@@ -129,8 +127,8 @@
             <span class="text-sm font-medium text-green-600">Saved successfully!</span>
         </x-action-message>
 
-        <x-button>
-            Save Changes    
-        </x-button>
+        <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-200">
+            Save Changes
+        </button>
     </x-slot>
 </x-form-section>
