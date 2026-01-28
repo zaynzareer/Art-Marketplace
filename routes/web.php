@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\OAuthRegistrationController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,9 +14,10 @@ Route::get('/about-us', function () {
     return view('about-us');
 })->name('about');
 
-Route::get('/contact-us', function () {
-    return view('contact-us');
-})->name('contact');
+// Contact Us Routes
+Route::get('/contact-us', [ContactController::class, 'show'])->name('contact');
+Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
+
 
 Route::middleware([
     'auth:sanctum',
