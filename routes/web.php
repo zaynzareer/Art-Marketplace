@@ -1,10 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\OAuthRegistrationController;
+
+// http health check route for ALB target group
+Route::get('/health-check', function () {
+    return response('OK', 200);
+})->withoutMiddleware([SecurityHeaders::class]);
 
 Route::get('/', function () {
     return view('welcome');
