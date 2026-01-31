@@ -2,21 +2,22 @@
 
 namespace App\Providers;
 
-use App\Listeners\CreateApiTokenOnLogin;
-use App\Listeners\RevokeApiTokenOnLogout;
-use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Product;
-use App\Observers\CartItemObserver;
-use App\Observers\OrderObserver;
-use App\Observers\ProductObserver;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Auth\Events\Logout;
-use Illuminate\Cache\RateLimiting\Limit;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
+use App\Observers\OrderObserver;
+use Illuminate\Auth\Events\Login;
+use App\Observers\ProductObserver;
+use Illuminate\Auth\Events\Logout;
+use App\Observers\CartItemObserver;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use App\Listeners\CreateApiTokenOnLogin;
+use Illuminate\Cache\RateLimiting\Limit;
+use App\Listeners\RevokeApiTokenOnLogout;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,6 +34,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+        }
         // Register model observers for cache invalidation
         Product::observe(ProductObserver::class);
         CartItem::observe(CartItemObserver::class);
