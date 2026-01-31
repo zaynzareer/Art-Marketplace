@@ -24,6 +24,16 @@ Route::get('/about-us', function () {
 Route::get('/contact-us', [ContactController::class, 'show'])->name('contact');
 Route::post('/contact/send', [ContactController::class, 'send'])->name('contact.send');
 
+// OAuth Routes
+Route::prefix('auth')->name('auth.')->group(function () {
+    Route::get('google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
+    Route::get('google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
+});
+
+Route::prefix('oauth')->name('oauth.')->group(function () {
+    Route::get('select-role', [OAuthRegistrationController::class, 'selectRoleForm'])->name('select-role');
+    Route::post('store-with-role', [OAuthRegistrationController::class, 'storeWithRole'])->name('store-with-role');
+});
 
 Route::middleware([
     'auth:sanctum',
