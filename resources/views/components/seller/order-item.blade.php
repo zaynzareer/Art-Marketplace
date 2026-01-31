@@ -1,7 +1,7 @@
 @props(['item'])
 
 <div class="flex items-center py-4">
-    <img src="{{ $item['image'] }}"
+    <img src="{{ Storage::url($item['image']) }}"
          class="w-20 h-20 object-cover rounded-md border">
 
     <div class="ml-4 flex-1">

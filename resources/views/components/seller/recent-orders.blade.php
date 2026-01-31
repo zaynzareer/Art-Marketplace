@@ -8,37 +8,25 @@
     <ul class="divide-y divide-gray-200">
         @forelse ($orders as $order)
             @php
-                $items = $order['order_items'] ?? $order['items'] ?? $order['orderItems'] ?? [];
-                $firstItem = $items[0] ?? [];
-                $product = $firstItem['product'] ?? [];
+                $items = $order['order_items'] ?? [];
+                $firstItem = $items[0] ?? null;
 
-                $image = $product['image'] ?? null;
+                $image = $firstItem['image'] ?? null;
                 if ($image) {
-                    $image = str_starts_with($image, 'http') || str_starts_with($image, '/storage/')
-                        ? $image
-                        : Storage::url(ltrim($image, '/'));
+                    $image = Storage::url($image);
                 } else {
                     $image = asset('images/placeholder.png');
                 }
 
-                $name = $product['name'] ?? ('Order #' . ($order['id'] ?? ''));
-                $createdAt = $order['order_date'] ?? $order['created_at'] ?? null;
+                $name = $firstItem['name'] ?? ('Order #' . ($order['id'] ?? ''));
+                $createdAt = $order['order_date'] ?? null;
                 try {
                     $timeText = $createdAt ? \Carbon\Carbon::parse($createdAt)->diffForHumans() : '';
                 } catch (\Throwable $e) {
                     $timeText = $createdAt ?? '';
                 }
 
-                $amount = 0;
-                if (isset($order['total'])) {
-                    $amount = (float) $order['total'];
-                } else {
-                    foreach ($items as $it) {
-                        $price = (float)($it['price'] ?? $it['unit_price'] ?? 0);
-                        $qty = (int)($it['quantity'] ?? 1);
-                        $amount += $price * $qty;
-                    }
-                }
+                $amount = (float) ($order['total'] ?? 0);
 
                 $status = $order['status'] ?? null;
                 $statusLower = $status ? strtolower($status) : '';
