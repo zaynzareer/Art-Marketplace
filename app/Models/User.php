@@ -37,6 +37,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'city',
         'street',
         'role',
+        'google_id',
+        'provider_name',
+        'profile_photo_path',
     ];
 
     /**
@@ -100,6 +103,6 @@ class User extends Authenticatable implements MustVerifyEmail
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
-    }  
-        
+    }
+    
 }

@@ -99,7 +99,7 @@ class GoogleAuthController extends Controller
             $filename = $user->id . '-' . time() . '.jpg';
             $path = 'profile-photos/' . $filename;
 
-            Storage::put($path, $imageContent);
+            Storage::disk(config('filesystems.default'))->put($path, $imageContent);
             $user->update(['profile_photo_path' => $path]);
 
         } catch (\Exception $e) {

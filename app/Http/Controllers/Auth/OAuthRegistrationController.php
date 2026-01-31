@@ -107,7 +107,7 @@ class OAuthRegistrationController extends Controller
             $filename = $user->id . '-' . time() . '.jpg';
             $path = 'profile-photos/' . $filename;
 
-            Storage::put($path, $imageContent);
+            Storage::disk(config('filesystems.default'))->put($path, $imageContent);
 
             // Update user's profile_photo_path (Jetstream field)
             $user->update(['profile_photo_path' => $path]);
