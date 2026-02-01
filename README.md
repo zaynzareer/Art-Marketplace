@@ -1,59 +1,143 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Art Marketplace
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+An academic full-stack web application for buying and selling artwork online, built with modern web technologies and best practices for security, authentication, and performance.
 
-## About Laravel
+## Project Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Crafty is an e-commerce platform designed to connect artists (sellers) with art enthusiasts (buyers). The platform provides a secure, scalable, and user-friendly environment for discovering, listing, and purchasing artwork. This project serves as an educational demonstration of web development patterns, including OAuth authentication, real-time notifications, API token security, and advanced caching features.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Key Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🎨 Core E-Commerce Functionality
+- **Product Catalog**: Browse and search artwork with detailed product information
+- **Shopping Cart**: Add/remove items with real-time cart updates using Livewire
+- **Order Management**: Complete order processing with confirmation emails
+- **Seller Dashboard**: Tools for sellers to list and manage their artwork inventory
 
-## Learning Laravel
+### 🔐 Authentication & Security
+- **Multi-Factor Authentication**: Secure login with Jetstream
+- **OAuth Integration**: Social authentication support (configured via Socialite)
+- **API Token Security**: Sanctum-based token authentication with revocation on logout
+- **Authorization Gates**: Fine-grained permission control for sellers and buyers
+- **Security Headers**: Comprehensive CSRF protection and security headers
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### ⚡ Real-Time Features
+- **Toast Notifications**: Real-time user feedback via Livewire components
+- **Order Confirmations**: Automated email notifications on purchase
+- **API Listeners**: Event-driven architecture with login/logout token management
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 💾 Performance & Caching
+- **Redis Caching**: Advanced caching architecture for improved response times
+- **Cache Strategy**: Optimized caching for product listings and user data
+- **Database Observers**: Automatic cache invalidation on data changes
 
-## Laravel Sponsors
+### 🌐 Cloud Deployment
+- **AWS Integration**: Complete deployment on AWS
+- **Scalable Architecture**: Built for production environments with AutoScaling paired with ALB. CI/CD pipeline is established using Github Actions. Cloudfront is configured for faster reload times. The application uses HTTPS through ACM.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Tech Stack
 
-### Premium Partners
+### Backend
+- **Framework**: Laravel 12
+- **Database ORM**: Eloquent
+- **Authentication**: Jetstream + Sanctum
+- **Real-time UI**: Livewire 3
+- **Payment**: Stripe (via Cashier)
+- **Social Auth**: Socialite
+- **Caching**: Redis + Predis
+- **Email**: Mail queue system
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Frontend
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **Framework**: Livewire components
+- **HTTP Client**: Axios
 
-## Contributing
+### Testing & Quality
+- **Testing**: PHPUnit
+- **Code Quality**: Pint (linter)
+- **Mocking**: Mockery
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Project Structure
 
-## Code of Conduct
+```
+app/
+├── Actions/          # Fortify & Jetstream actions
+├── Console/          # Artisan commands
+├── Helpers/          # Utility functions (cache helpers)
+├── Http/             # Controllers, middleware, API resources
+├── Jobs/             # Queue jobs (email sending)
+├── Listeners/        # Event listeners (token management)
+├── Livewire/         # Real-time components (Buyer, Seller, Toast)
+├── Mail/             # Mailable classes
+├── Models/           # Eloquent models (User, Product, Order, Cart)
+├── Observers/        # Model observers for cache invalidation
+├── Policies/         # Authorization policies
+└── Traits/           # Shared functionality
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Key Learning Outcomes
 
-## Security Vulnerabilities
+This project demonstrates:
+- **RESTful API Design**: Token-based authentication and API security
+- **Event-Driven Architecture**: Listeners and queue jobs for async processing
+- **Authorization Patterns**: Gates and policies for access control
+- **Real-Time Interactions**: Livewire for reactive components without full page reloads
+- **Performance Optimization**: Caching strategies and database query optimization
+- **Payment Integration**: Secure payment processing with Stripe
+- **Production Deployment**: AWS configuration and deployment best practices
+- **Email Management**: Queue-based email delivery with confirmations
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Getting Started
+
+### Prerequisites
+- PHP 8.2+
+- Composer
+- Node.js & npm
+- MySQL/PostgreSQL database
+- Redis (for caching)
+- AWS account (for deployment)
+
+### Installation
+
+1. Clone the repository
+2. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
+3. Install JavaScript dependencies:
+   ```bash
+   npm install
+   ```
+4. Copy environment file:
+   ```bash
+   cp .env.example .env
+   ```
+5. Generate application key:
+   ```bash
+   php artisan key:generate
+   ```
+6. Run migrations:
+   ```bash
+   php artisan migrate
+   ```
+7. Build frontend assets:
+   ```bash
+   npm run build
+   ```
+8. Start development server:
+   ```bash
+   php artisan serve
+   npm run dev
+   ```
+
+## Testing
+
+Run the test suite:
+```bash
+php artisan test
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The Art Marketplace project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
