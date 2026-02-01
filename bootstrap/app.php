@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\TrustProxies;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Trust proxies (AWS ALB, reverse proxies)
         $middleware->trustProxies(at: '*');
+        
+        // Apply security headers to all requests
+        $middleware->append(SecurityHeaders::class);
         
         $middleware->alias([
             'role' => EnsureUserHasRole::class,
