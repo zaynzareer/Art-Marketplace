@@ -36,53 +36,53 @@
                     Sign up with Google
                 </a>
 
-                <form method="POST" action="{{ route('register') }}" class="space-y-5">
+                <form method="POST" action="{{ route('register') }}" class="space-y-5" x-data="{ submitting: false }" @submit="submitting = true">
                     @csrf
 
                     <div>
                         <label for="name" class="block text-sm font-medium text-slate-700">Full Name</label>
-                        <input id="name" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+                        <input id="name" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" :readonly="submitting" />
                     </div>
 
                     <div>
                         <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
-                        <input id="email" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="email" name="email" :value="old('email')" required autocomplete="username" />
+                        <input id="email" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" :readonly="submitting" />
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label for="age" class="block text-sm font-medium text-slate-700">Age</label>
-                            <input id="age" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="number" name="age" :value="old('age')" required />
+                            <input id="age" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="number" name="age" value="{{ old('age') }}" required :readonly="submitting" />
                         </div>
 
                         <div>
                             <label for="role" class="block text-sm font-medium text-slate-700 ml-2">Role</label>
                             <select id="role" name="role" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" required>
                                 <option value="">Select Role</option>
-                                <option value="seller">Seller</option>
-                                <option value="buyer">Buyer</option>
+                                <option value="seller" @selected(old('role') === 'seller')>Seller</option>
+                                <option value="buyer" @selected(old('role') === 'buyer')>Buyer</option>
                             </select>
                         </div>
                     </div>
 
                     <div>
                         <label for="city" class="block text-sm font-medium text-slate-700">City</label>
-                        <input id="city" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="text" name="city" :value="old('city')" required />
+                        <input id="city" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="text" name="city" value="{{ old('city') }}" required :readonly="submitting" />
                     </div>
 
                     <div>
                         <label for="street" class="block text-sm font-medium text-slate-700">Street Address</label>
-                        <input id="street" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="text" name="street" :value="old('street')" required />
+                        <input id="street" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="text" name="street" value="{{ old('street') }}" required :readonly="submitting" />
                     </div>
 
                     <div>
                         <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
-                        <input id="password" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="password" name="password" required autocomplete="new-password" />
+                        <input id="password" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="password" name="password" required autocomplete="new-password" :readonly="submitting" />
                     </div>
 
                     <div>
                         <label for="password_confirmation" class="block text-sm font-medium text-slate-700">Confirm Password</label>
-                        <input id="password_confirmation" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="password" name="password_confirmation" required autocomplete="new-password" />
+                        <input id="password_confirmation" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="password" name="password_confirmation" required autocomplete="new-password" :readonly="submitting" />
                     </div>
 
                     @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
@@ -99,8 +99,13 @@
                         </div>
                     @endif
 
-                    <button type="submit" class="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-3 font-semibold shadow-sm hover:translate-y-px transition">
-                        Create Account
+                    <button type="submit" class="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-3 font-semibold shadow-sm hover:translate-y-px transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0" :disabled="submitting">
+                        <svg x-show="submitting" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span x-show="!submitting">Create Account</span>
+                        <span x-show="submitting">Creating Account...</span>
                     </button>
 
                     <p class="text-sm text-center text-slate-600">Already have an account? <a href="{{ route('login') }}" class="font-semibold text-slate-900 hover:underline">Sign in</a></p>

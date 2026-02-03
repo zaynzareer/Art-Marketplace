@@ -41,17 +41,17 @@
                     </div>
                 @endsession
 
-                <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                <form method="POST" action="{{ route('login') }}" class="space-y-5" x-data="{ submitting: false }" @submit="submitting = true">
                     @csrf
 
                     <div>
                         <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
-                        <input id="email" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                        <input id="email" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" :readonly="submitting" />
                     </div>
 
                     <div>
                         <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
-                        <input id="password" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="password" name="password" required autocomplete="current-password" />
+                        <input id="password" class="mt-2 block w-full rounded-xl border-slate-200 focus:border-slate-500 focus:ring-slate-500" type="password" name="password" required autocomplete="current-password" :readonly="submitting" />
                         @if (Route::has('password.request'))
                             <div class="mt-2 text-right">
                                 <a class="text-sm font-semibold text-slate-600 hover:text-slate-900" href="{{ route('password.request') }}">Forgot your password?</a>
@@ -66,8 +66,13 @@
                         </label>
                     </div>
 
-                    <button type="submit" class="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-3 font-semibold shadow-sm hover:translate-y-px transition">
-                        Log in
+                    <button type="submit" class="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-3 font-semibold shadow-sm hover:translate-y-px transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0" :disabled="submitting">
+                        <svg x-show="submitting" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span x-show="!submitting">Log in</span>
+                        <span x-show="submitting">Logging in...</span>
                     </button>
 
                     @if (Route::has('register'))
