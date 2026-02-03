@@ -19,6 +19,18 @@ class Product extends Component
     public $products = [];
     public $meta = [];
 
+    public array $categories = [
+        'all' => 'All Categories',
+        'pottery' => 'Pottery',
+        'paintings' => 'Paintings',
+        'jewelry' => 'Jewelry',
+        'sculptures' => 'Sculptures',
+        'textiles' => 'Textiles',
+        'glassarts' => 'Glass Arts',
+        'collectibles' => 'Collectibles',
+        'leathercrafts' => 'Leather Crafts',
+    ];
+
     // Reset page and fetch products when filters are updated
     public function updated($property)
     {

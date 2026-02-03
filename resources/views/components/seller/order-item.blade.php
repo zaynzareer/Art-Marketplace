@@ -7,7 +7,7 @@
     <div class="ml-4 flex-1">
         <h3 class="text-sm font-semibold">{{ $item['name'] }}</h3>
         <p class="text-xs text-gray-500">
-            Category: {{ $item['category'] }}
+            Category: {{ \App\Helpers\CategoryHelper::getLabel($item['category']) }}
         </p>
         <p class="text-xs text-gray-500">
             Quantity: {{ $item['quantity'] }}

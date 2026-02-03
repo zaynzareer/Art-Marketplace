@@ -58,10 +58,12 @@ class ProductController extends Controller
         // Build query
         $query = Product::query()->with('seller');
 
-        // Search filter
+        // Search filter - use grouped where clause to ensure proper AND/OR logic
         if (!empty($search)) {
-            $query->where('name', 'like', '%' . $search . '%')
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
                   ->orWhere('description', 'like', '%' . $search . '%');
+            });
         }
 
         // Category filter
@@ -98,10 +100,12 @@ class ProductController extends Controller
         // Build query
         $query = Product::where('seller_id', Auth::id());
 
-        // Search filter
+        // Search filter - use whereAny to search across multiple columns
         if (!empty($search)) {
-            $query->where('name', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
         // Category filter
@@ -162,7 +166,7 @@ class ProductController extends Controller
                 'name'        => 'required|string|max:100|min:3',
                 'description' => 'nullable|string|max:1000',
                 'price'       => 'required|numeric|min:0.01|max:999999.99',
-                'category'    => 'required|string|in:Paintings,Collectibles,Pottery,Sculptures,Glass Art,Leather Goods,Textiles,Jewelry',
+                'category'    => 'required|string|in:pottery,paintings,jewelry,sculptures,textiles,glassarts,collectibles,leathercrafts',
                 'image'       => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
             ]);
             
@@ -270,7 +274,7 @@ class ProductController extends Controller
                 'name'        => 'sometimes|required|string|max:100|min:3',
                 'description' => 'sometimes|nullable|string|max:1000',
                 'price'       => 'sometimes|required|numeric|min:0.01|max:999999.99',
-                'category'    => 'sometimes|required|string|in:Paintings,Collectibles,Pottery,Sculptures,Glass Art,Leather Goods,Textiles,Jewelry',
+                'category'    => 'sometimes|required|string|in:pottery,paintings,jewelry,sculptures,textiles,glassarts,collectibles,leathercrafts',
                 'image'       => 'sometimes|image|mimes:jpeg,png,jpg,webp|max:5120',
             ]);
 

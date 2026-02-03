@@ -22,7 +22,14 @@ class ProductForm extends Component
     public $existingImage;
 
     public array $categories = [
-        'Paintings', 'Collectibles', 'Pottery', 'Sculptures', 'Glass Art', 'Leather Goods', 'Textiles', 'Jewelry'
+        'pottery' => 'Pottery',
+        'paintings' => 'Paintings',
+        'jewelry' => 'Jewelry',
+        'sculptures' => 'Sculptures',
+        'textiles' => 'Textiles',
+        'glassarts' => 'Glass Arts',
+        'collectibles' => 'Collectibles',
+        'leathercrafts' => 'Leather Crafts',
     ];
 
     protected function rules()
