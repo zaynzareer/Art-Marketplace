@@ -1,13 +1,13 @@
-<div class="container mx-auto px-6 py-12">
-    <h1 class="text-2xl font-bold mb-8">Customer Orders</h1>
+<div class="container mx-auto px-4 sm:px-6 py-6 md:py-12">
+    <h1 class="text-xl sm:text-2xl font-bold mb-6 md:mb-8">Customer Orders</h1>
 
     @forelse ($ordersByDate as $label => $orders)
-        <div class="mb-10">
-            <h2 class="text-lg font-semibold text-gray-700 mb-4">
+        <div class="mb-8 md:mb-10">
+            <h2 class="text-base sm:text-lg font-semibold text-gray-700 mb-4">
                 {{ $label }}
             </h2>
 
-            <div class="space-y-6">
+            <div class="space-y-4 md:space-y-6">
                 @foreach ($orders as $order)
                     <x-seller.order-card
                         :order="$order"

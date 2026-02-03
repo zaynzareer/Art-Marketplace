@@ -7,7 +7,7 @@
         <div class="flex justify-between">
             <div class="min-w-0">
                 <h3 class="text-sm font-semibold text-gray-900 truncate">{{ $product['name'] }}</h3>
-                <p class="text-xs text-gray-500 mt-1 truncate">{{ $product['category'] }}</p>
+                <p class="text-xs text-gray-500 mt-1 truncate">{{ \App\Helpers\CategoryHelper::getLabel($product['category']) }}</p>
             </div>
 
             <p class="text-sm font-bold text-gray-900">${{ $product['price'] }}</p>

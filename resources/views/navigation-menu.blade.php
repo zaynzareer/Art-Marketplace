@@ -21,12 +21,12 @@
                         </x-nav-link>
                     </div>
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link href="{{ route('products.index') }}">
+                        <x-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.*')">
                             {{ __('My Products') }}
                         </x-nav-link>
                     </div>
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link href="{{ route('seller.orders') }}">
+                        <x-nav-link href="{{ route('seller.orders') }}" :active="request()->routeIs('seller.orders')">
                             {{ __('Sales Orders') }}
                         </x-nav-link>
                     </div>
@@ -35,12 +35,12 @@
                 <!-- Buyer Navigation -->
                 @can('view-buyer-nav')
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link href="{{ route('dashboard') }}">
+                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                             {{ __('Browse Products') }}
                         </x-nav-link>
                     </div>
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link href="{{ route('buyer.orders') }}">
+                        <x-nav-link href="{{ route('buyer.orders') }}" :active="request()->routeIs('buyer.orders')">
                             {{ __('Purchase History') }}
                         </x-nav-link>
                     </div>
@@ -48,12 +48,12 @@
 
                 <!-- Shared Navigation -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('about') }}">
+                    <x-nav-link href="{{ route('about') }}" :active="request()->routeIs('about')">
                         {{ __('About Us') }}
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('contact') }}">
+                    <x-nav-link href="{{ route('contact') }}" :active="request()->routeIs('contact')">
                         {{ __('Contact Us') }}
                     </x-nav-link>
                 </div>
@@ -191,29 +191,29 @@
                 <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('products.index') }}">
+                <x-responsive-nav-link href="{{ route('products.index') }}" :active="request()->routeIs('products.*')">
                     {{ __('My Products') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('seller.orders') }}">
+                <x-responsive-nav-link href="{{ route('seller.orders') }}" :active="request()->routeIs('seller.orders')">
                     {{ __('Sales Orders') }}
                 </x-responsive-nav-link>
             @endcan
 
             <!-- Buyer Navigation (Mobile) -->
             @can('view-buyer-nav')
-                <x-responsive-nav-link href="{{ route('dashboard') }}">
+                <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                     {{ __('Browse Products') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('buyer.orders') }}">
+                <x-responsive-nav-link href="{{ route('buyer.orders') }}" :active="request()->routeIs('buyer.orders')">
                     {{ __('Purchase History') }}
                 </x-responsive-nav-link>
             @endcan
 
             <!-- Shared Navigation (Mobile) -->
-            <x-responsive-nav-link href="{{ route('about') }}">
+            <x-responsive-nav-link href="{{ route('about') }}" :active="request()->routeIs('about')">
                 {{ __('About Us') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('contact') }}">
+            <x-responsive-nav-link href="{{ route('contact') }}" :active="request()->routeIs('contact')">
                 {{ __('Contact Us') }}
             </x-responsive-nav-link>
         </div>

@@ -23,27 +23,27 @@
         <link rel="icon" href="{{ Storage::url('logo.png') }}" type="image/x-icon"/>
 
     </head>
-    <body class="bg-[#FDFDFC] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
-        <header class="w-full lg:max-w-6xl max-w-[700px] text-sm mb-6 not-has-[nav]:hidden">
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div class="flex items-center gap-3">
-                    <img src="{{ Storage::url('logo.png') }}" alt="Crafty Logo" class="h-8 w-8 rounded-full">
-                    <span class="text-base font-semibold text-[#1b1b18]">Crafty</span>
+    <body class="bg-[#FDFDFC] text-[#1b1b18]">
+        <header class="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-4 md:px-8">
+            <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2 md:gap-3">
+                    <img src="{{ Storage::url('logo.png') }}" alt="Crafty Logo" class="h-7 w-7 md:h-8 md:w-8 rounded-full">
+                    <span class="text-base md:text-lg font-semibold text-[#1b1b18]">Crafty</span>
                 </div>
 
                 @if (Route::has('login'))
-                    <nav class="flex items-center justify-end gap-4">
+                    <nav class="flex items-center justify-end gap-2 md:gap-4">
                     @auth
                         <a
                             href="{{ url('/dashboard') }}"
-                            class="inline-block px-5 py-1.5 border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] rounded-sm text-sm leading-normal"
+                            class="inline-block px-3 md:px-5 py-1.5 border border-[#19140035] hover:border-[#1915014a] text-[#1b1b18] rounded-sm text-xs md:text-sm leading-normal transition-colors"
                         >
                             Dashboard
                         </a>
                     @else
                         <a
                             href="{{ route('login') }}"
-                            class="inline-block px-5 py-1.5 text-[#1b1b18] border border-transparent hover:border-[#19140035] rounded-sm text-sm leading-normal"
+                            class="inline-block px-3 md:px-5 py-1.5 text-[#1b1b18] border border-transparent hover:border-[#19140035] rounded-sm text-xs md:text-sm leading-normal transition-colors"
                         >
                             Log in
                         </a>
@@ -51,7 +51,7 @@
                         @if (Route::has('register'))
                             <a
                                 href="{{ route('register') }}"
-                                class="inline-block px-5 py-1.5 border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] rounded-sm text-sm leading-normal">
+                                class="inline-block px-3 md:px-5 py-1.5 border border-[#19140035] hover:border-[#1915014a] text-[#1b1b18] rounded-sm text-xs md:text-sm leading-normal transition-colors">
                                 Register
                             </a>
                         @endif
@@ -60,124 +60,145 @@
                 @endif
             </div>
         </header>
-        <main>
-            <section class="container mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-                <div>
-                    <h1 class="text-4xl font-bold mb-4">Discover Extraordinary Art & Rare Collectibles</h1>
-                    <p class="text-gray-600 mb-6">
-                    Curated collection of original artworks, vintage pieces, and exclusive collectibles from around the world. Each piece tells a unique story waiting to be discovered.
-                    </p>
-                    <div class="flex space-x-4">
-                    <a href="#" class="bg-black text-white px-5 py-2 rounded">Browse Collection</a>
-                    <a href="#" class="border px-5 py-2 rounded">Learn More</a>
+        <main class="flex-1">
+            <!-- Hero Section -->
+            <section class="px-4 md:px-8 py-8 md:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50">
+                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+                    <div class="space-y-4 md:space-y-6 order-2 md:order-1">
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-[#1b1b18]">
+                            Discover Extraordinary Art & Rare Collectibles
+                        </h1>
+                        <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
+                            Curated collection of original artworks, vintage pieces, and exclusive collectibles from around the world. Each piece tells a unique story waiting to be discovered.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-3 md:gap-4 pt-2 md:pt-4">
+                            <a href="#" class="bg-black text-white px-6 md:px-8 py-2.5 md:py-3 rounded text-sm md:text-base font-medium hover:bg-gray-800 transition-colors text-center">
+                                Browse Collection
+                            </a>
+                            <a href="#" class="border border-black text-black px-6 md:px-8 py-2.5 md:py-3 rounded text-sm md:text-base font-medium hover:bg-black hover:text-white transition-colors text-center">
+                                Learn More
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <img src="{{ Storage::url('img1.jpg') }}" alt="Gallery" class="rounded-lg shadow-md">
+                    <div class="order-1 md:order-2">
+                        <img src="{{ Storage::url('img1.jpg') }}" alt="Gallery" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
                 </div>
             </section>
 
             <!-- Featured Collection -->
-            <section class="bg-gray-50 py-16">
-            <div class="container mx-auto px-6 text-center">
-                <h2 class="text-2xl font-semibold mb-2">Featured Collection</h2>
-                <p class="text-gray-600 mb-10">Handpicked masterpieces from our curated selection of contemporary and classic artworks</p>
-                <div class="grid md:grid-cols-4 gap-6">
-                    <div class="bg-white shadow rounded-lg overflow-hidden">
-                        <img src="{{ Storage::url('img4.jpg') }}" alt="Art" class="w-full h-48 object-cover">
-                        <div class="p-4 text-left">
-                        <h3 class="font-semibold">Abstract Expression</h3>
-                        <p class="text-sm text-gray-500">by Elena Rodriguez</p>
-                        <p class="font-bold mt-2">$2,400</p>
-                        <a href="#" class="mt-2 inline-block px-4 py-2 border rounded text-sm">View Details</a>
-                        </div>
+            <section class="bg-gray-50 px-4 md:px-8 py-8 md:py-16 lg:py-20">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-8 md:mb-12 space-y-2">
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1b1b18]">Featured Collection</h2>
+                        <p class="text-sm sm:text-base text-gray-600">Handpicked masterpieces from our curated selection of contemporary and classic artworks</p>
                     </div>
-                    <div class="bg-white shadow rounded-lg overflow-hidden">
-                        <img src="{{ Storage::url('img3.jpg') }}" alt="Art" class="w-full h-48 object-cover">
-                        <div class="p-4 text-left">
-                        <h3 class="font-semibold">Gallery Masterpiece</h3>
-                        <p class="text-sm text-gray-500">by Thomas Chen</p>
-                        <p class="font-bold mt-2">$1,850</p>
-                        <a href="#" class="mt-2 inline-block px-4 py-2 border rounded text-sm">View Details</a>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                            <img src="{{ Storage::url('img4.jpg') }}" alt="Art" class="w-full h-40 sm:h-48 object-cover">
+                            <div class="p-4 md:p-5 space-y-2">
+                                <h3 class="font-semibold text-sm md:text-base text-[#1b1b18]">Abstract Expression</h3>
+                                <p class="text-xs md:text-sm text-gray-500">by Elena Rodriguez</p>
+                                <p class="font-bold text-sm md:text-base">$2,400</p>
+                                <a href="#" class="mt-3 inline-block px-4 py-2 border border-black rounded text-xs md:text-sm hover:bg-black hover:text-white transition-colors">View Details</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="bg-white shadow rounded-lg overflow-hidden">
-                        <img src="{{ Storage::url('img5.jpg') }}" alt="Art" class="w-full h-48 object-cover">
-                        <div class="p-4 text-left">
-                        <h3 class="font-semibold">Vintage Sculpture</h3>
-                        <p class="text-sm text-gray-500">by Marie Dubois</p>
-                        <p class="font-bold mt-2">$3,200</p>
-                        <a href="#" class="mt-2 inline-block px-4 py-2 border rounded text-sm">View Details</a>
+                        <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                            <img src="{{ Storage::url('img3.jpg') }}" alt="Art" class="w-full h-40 sm:h-48 object-cover">
+                            <div class="p-4 md:p-5 space-y-2">
+                                <h3 class="font-semibold text-sm md:text-base text-[#1b1b18]">Gallery Masterpiece</h3>
+                                <p class="text-xs md:text-sm text-gray-500">by Thomas Chen</p>
+                                <p class="font-bold text-sm md:text-base">$1,850</p>
+                                <a href="#" class="mt-3 inline-block px-4 py-2 border border-black rounded text-xs md:text-sm hover:bg-black hover:text-white transition-colors">View Details</a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="bg-white shadow rounded-lg overflow-hidden">
-                        <img src="{{ Storage::url('img6.jpg') }}" alt="Art" class="w-full h-48 object-cover">
-                        <div class="p-4 text-left">
-                        <h3 class="font-semibold">Ceramic Collection</h3>
-                        <p class="text-sm text-gray-500">by Hiroshi Tanaka</p>
-                        <p class="font-bold mt-2">$650</p>
-                        <a href="#" class="mt-2 inline-block px-4 py-2 border rounded text-sm">View Details</a>
+                        <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                            <img src="{{ Storage::url('img5.jpg') }}" alt="Art" class="w-full h-40 sm:h-48 object-cover">
+                            <div class="p-4 md:p-5 space-y-2">
+                                <h3 class="font-semibold text-sm md:text-base text-[#1b1b18]">Vintage Sculpture</h3>
+                                <p class="text-xs md:text-sm text-gray-500">by Marie Dubois</p>
+                                <p class="font-bold text-sm md:text-base">$3,200</p>
+                                <a href="#" class="mt-3 inline-block px-4 py-2 border border-black rounded text-xs md:text-sm hover:bg-black hover:text-white transition-colors">View Details</a>
+                            </div>
+                        </div>
+                        <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                            <img src="{{ Storage::url('img6.jpg') }}" alt="Art" class="w-full h-40 sm:h-48 object-cover">
+                            <div class="p-4 md:p-5 space-y-2">
+                                <h3 class="font-semibold text-sm md:text-base text-[#1b1b18]">Ceramic Collection</h3>
+                                <p class="text-xs md:text-sm text-gray-500">by Hiroshi Tanaka</p>
+                                <p class="font-bold text-sm md:text-base">$650</p>
+                                <a href="#" class="mt-3 inline-block px-4 py-2 border border-black rounded text-xs md:text-sm hover:bg-black hover:text-white transition-colors">View Details</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             </section>
 
             <!-- About Section -->
-            <section class="container mx-auto px-6 py-16 grid md:grid-cols-2 gap-10 items-center">
-                <div class="overflow-hidden">
-                    <img src="{{ Storage::url('img2.jpg') }}" alt="Studio" class="rounded-lg shadow-md max-h-80 w-full object-cover">
-                </div>
-                <div>
-                    <h2 class="text-2xl font-semibold mb-4">Our Story & Mission</h2>
-                    <p class="text-gray-600 mb-6">
-                    For over two decades, Crafty has been connecting art enthusiasts with extraordinary pieces from emerging and established artists worldwide. We believe that great art should be accessible to everyone who appreciates beauty and craftsmanship.
-                    </p>
-                    <p class="text-gray-600 mb-6">
-                    Our carefully curated collection spans various mediums, styles, and periods, ensuring that every piece in our gallery meets the highest standards of artistic excellence and authenticity.
-                    </p>
-                    <div class="flex space-x-10 mt-6">
-                        <div>
-                            <p class="text-2xl font-bold">2000+</p>
-                            <p class="text-gray-500">Artworks Sold</p>
-                        </div>
-                        <div>
-                            <p class="text-2xl font-bold">150+</p>
-                            <p class="text-gray-500">Featured Artists</p>
+            <section class="px-4 md:px-8 py-8 md:py-16 lg:py-20 bg-white">
+                <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+                    <div class="order-2 md:order-1">
+                        <img src="{{ Storage::url('img2.jpg') }}" alt="Studio" class="rounded-lg shadow-md w-full h-auto max-h-96 object-cover">
+                    </div>
+                    <div class="order-1 md:order-2 space-y-4 md:space-y-6">
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1b1b18]">Our Story & Mission</h2>
+                        <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
+                            For over two decades, Crafty has been connecting art enthusiasts with extraordinary pieces from emerging and established artists worldwide. We believe that great art should be accessible to everyone who appreciates beauty and craftsmanship.
+                        </p>
+                        <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
+                            Our carefully curated collection spans various mediums, styles, and periods, ensuring that every piece in our gallery meets the highest standards of artistic excellence and authenticity.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-6 sm:gap-8 md:gap-10 pt-2 md:pt-4">
+                            <div>
+                                <p class="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1b1b18]">2000+</p>
+                                <p class="text-xs sm:text-sm text-gray-500 mt-1">Artworks Sold</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1b1b18]">150+</p>
+                                <p class="text-xs sm:text-sm text-gray-500 mt-1">Featured Artists</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Testimonials -->
-            <section class="bg-gray-50 py-16">
-                <div class="container mx-auto px-6 text-center">
-                    <h2 class="text-2xl font-semibold mb-2">What Our Collectors Say</h2>
-                    <p class="text-gray-600 mb-10">Join thousands of satisfied customers who have found their perfect piece through Crafty</p>
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <div class="bg-white shadow p-6 rounded-lg text-left">
-                            <div class="flex mb-3 space-x-1 text-yellow-500">
-                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            <section class="bg-gray-50 px-4 md:px-8 py-8 md:py-16 lg:py-20">
+                <div class="max-w-7xl mx-auto">
+                    <div class="text-center mb-8 md:mb-12 space-y-2">
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1b1b18]">What Our Collectors Say</h2>
+                        <p class="text-sm sm:text-base text-gray-600">Join thousands of satisfied customers who have found their perfect piece through Crafty</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        <div class="bg-white shadow p-5 md:p-6 rounded-lg space-y-4">
+                            <div class="flex gap-1 text-yellow-500 text-lg">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                             </div>
-                            <p class="text-gray-700 mb-4">"Crafty helped me find the perfect centerpiece for my living room. The quality and authenticity of their pieces is unmatched."</p>
-                            <p class="font-semibold">Sarah Johnson</p>
-                            <p class="text-sm text-gray-500">Art Collector</p>
+                            <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">"Crafty helped me find the perfect centerpiece for my living room. The quality and authenticity of their pieces is unmatched."</p>
+                            <div>
+                                <p class="font-semibold text-sm text-[#1b1b18]">Sarah Johnson</p>
+                                <p class="text-xs text-gray-500">Art Collector</p>
+                            </div>
                         </div>
-                        <div class="bg-white shadow p-6 rounded-lg text-left">
-                            <div class="flex mb-3 space-x-1 text-yellow-500">
-                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        <div class="bg-white shadow p-5 md:p-6 rounded-lg space-y-4">
+                            <div class="flex gap-1 text-yellow-500 text-lg">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                             </div>
-                            <p class="text-gray-700 mb-4">"I regularly source artwork from Crafty for my clients. Their curation is exceptional and the service is always professional."</p>
-                            <p class="font-semibold">Michael Chen</p>
-                            <p class="text-sm text-gray-500">Interior Designer</p>
+                            <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">"I regularly source artwork from Crafty for my clients. Their curation is exceptional and the service is always professional."</p>
+                            <div>
+                                <p class="font-semibold text-sm text-[#1b1b18]">Michael Chen</p>
+                                <p class="text-xs text-gray-500">Interior Designer</p>
+                            </div>
                         </div>
-                        <div class="bg-white shadow p-6 rounded-lg text-left">
-                            <div class="flex mb-3 space-x-1 text-yellow-500">
-                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        <div class="bg-white shadow p-5 md:p-6 rounded-lg space-y-4">
+                            <div class="flex gap-1 text-yellow-500 text-lg">
+                                <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                             </div>
-                            <p class="text-gray-700 mb-4">"As someone new to art collecting, the team at Crafty guided me through the entire process. Couldn't be happier with my purchase!"</p>
-                            <p class="font-semibold">Emma Rodriguez</p>
-                            <p class="text-sm text-gray-500">First-time Buyer</p>
+                            <p class="text-xs sm:text-sm text-gray-700 leading-relaxed">"As someone new to art collecting, the team at Crafty guided me through the entire process. Couldn't be happier with my purchase!"</p>
+                            <div>
+                                <p class="font-semibold text-sm text-[#1b1b18]">Emma Rodriguez</p>
+                                <p class="text-xs text-gray-500">First-time Buyer</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -185,7 +206,7 @@
         </main>
 
         @if (Route::has('login'))
-            <div class="h-14.5 hidden lg:block"></div>
+            <div class="h-16 hidden lg:block"></div>
         @endif
 
         <x-footer />

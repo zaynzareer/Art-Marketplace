@@ -1,22 +1,22 @@
 @props(['order', 'onStatusChange'])
 
-<div class="bg-white border rounded-lg shadow-sm p-6">
+<div class="bg-white border rounded-lg shadow-sm p-4 sm:p-6">
     {{-- Header --}}
-    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
-        <div class="space-y-1">
-            <p class="text-sm text-gray-600">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-3 md:gap-0 mb-6">
+        <div class="space-y-1 min-w-0">
+            <p class="text-xs sm:text-sm text-gray-600 truncate">
                 Order:
                 <span class="font-medium text-gray-900">
                     #{{ $order['id'] }}
                 </span>
             </p>
-            <p class="text-sm text-gray-600">
+            <p class="text-xs sm:text-sm text-gray-600 truncate">
                 Buyer:
-                <span class="font-medium text-gray-900">
+                <span class="font-medium text-gray-900 truncate">
                     {{ $order['buyer_name'] }}
                 </span>
             </p>
-            <p class="text-sm text-gray-600">
+            <p class="text-xs sm:text-sm text-gray-600">
                 Placed on:
                 <span class="font-medium">
                     {{ \Carbon\Carbon::parse($order['order_date'])->format('M d, Y') }}
@@ -38,8 +38,8 @@
     </div>
 
     {{-- Footer --}}
-    <div class="mt-6 flex justify-between">
-        <p class="text-sm">
+    <div class="mt-6 flex flex-col sm:flex-row sm:justify-between gap-2">
+        <p class="text-xs sm:text-sm">
             Order Total:
             <span class="font-semibold">
                 ${{ $order['total'] }}
